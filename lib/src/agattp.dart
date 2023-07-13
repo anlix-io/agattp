@@ -96,6 +96,18 @@ class Agattp {
   ///
   ///
   ///
+  Future<AgattpResponse> head(
+    Uri uri, {
+    Map<String, String> headers = const <String, String>{},
+  }) async {
+    final HttpClient client = _prepareClient();
+    final HttpClientRequest request = await client.headUrl(uri);
+    return _send(client, request, headers, null);
+  }
+
+  ///
+  ///
+  ///
   Future<AgattpResponse> post(
     Uri uri, {
     Map<String, String> headers = const <String, String>{},
@@ -103,6 +115,45 @@ class Agattp {
   }) async {
     final HttpClient client = _prepareClient();
     final HttpClientRequest request = await client.postUrl(uri);
+    return _send(client, request, headers, body);
+  }
+
+  ///
+  ///
+  ///
+  Future<AgattpResponse> put(
+    Uri uri, {
+    Map<String, String> headers = const <String, String>{},
+    String? body,
+  }) async {
+    final HttpClient client = _prepareClient();
+    final HttpClientRequest request = await client.putUrl(uri);
+    return _send(client, request, headers, body);
+  }
+
+  ///
+  ///
+  ///
+  Future<AgattpResponse> patch(
+    Uri uri, {
+    Map<String, String> headers = const <String, String>{},
+    String? body,
+  }) async {
+    final HttpClient client = _prepareClient();
+    final HttpClientRequest request = await client.patchUrl(uri);
+    return _send(client, request, headers, body);
+  }
+
+  ///
+  ///
+  ///
+  Future<AgattpResponse> delete(
+    Uri uri, {
+    Map<String, String> headers = const <String, String>{},
+    String? body,
+  }) async {
+    final HttpClient client = _prepareClient();
+    final HttpClientRequest request = await client.deleteUrl(uri);
     return _send(client, request, headers, body);
   }
 }

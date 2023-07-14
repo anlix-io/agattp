@@ -39,6 +39,17 @@ void main() {
       expect(response.json['url'], url);
     });
 
+    test('GET Json No Content', () async {
+      const String url = 'https://httpbingo.org/status/204';
+
+      final AgattpResponseJson<void> response =
+          await Agattp().getJson(Uri.parse(url));
+
+      expect(response.statusCode, 204);
+      expect(response.reasonPhrase, 'No Content');
+      expect(response.body, isEmpty);
+    });
+
     test('HEAD', () async {
       final AgattpResponse response =
           await Agattp().head(Uri.parse('https://httpbingo.org/head'));
@@ -56,6 +67,17 @@ void main() {
 
       expect(response.statusCode, 200);
       expect(response.reasonPhrase, 'OK');
+      expect(response.body, isEmpty);
+    });
+
+    test('HEAD Json No Content', () async {
+      const String url = 'https://httpbingo.org/status/204';
+
+      final AgattpResponseJson<void> response =
+          await Agattp().headJson(Uri.parse(url));
+
+      expect(response.statusCode, 204);
+      expect(response.reasonPhrase, 'No Content');
       expect(response.body, isEmpty);
     });
 
@@ -107,6 +129,17 @@ void main() {
       expect(json['url'], url);
     });
 
+    test('POST Json No Content', () async {
+      const String url = 'https://httpbingo.org/status/204';
+
+      final AgattpResponseJson<void> response =
+          await Agattp().postJson(Uri.parse(url));
+
+      expect(response.statusCode, 204);
+      expect(response.reasonPhrase, 'No Content');
+      expect(response.body, isEmpty);
+    });
+
     test('PUT', () async {
       final AgattpResponse response = await Agattp().put(
         Uri.parse('https://httpbingo.org/put'),
@@ -153,6 +186,17 @@ void main() {
 
       expect(json['json'], isNull);
       expect(json['url'], url);
+    });
+
+    test('PUT Json No Content', () async {
+      const String url = 'https://httpbingo.org/status/204';
+
+      final AgattpResponseJson<void> response =
+          await Agattp().putJson(Uri.parse(url));
+
+      expect(response.statusCode, 204);
+      expect(response.reasonPhrase, 'No Content');
+      expect(response.body, isEmpty);
     });
 
     test('PATCH', () async {
@@ -203,6 +247,17 @@ void main() {
       expect(json['url'], url);
     });
 
+    test('PATCH Json No Content', () async {
+      const String url = 'https://httpbingo.org/status/204';
+
+      final AgattpResponseJson<void> response =
+          await Agattp().patchJson(Uri.parse(url));
+
+      expect(response.statusCode, 204);
+      expect(response.reasonPhrase, 'No Content');
+      expect(response.body, isEmpty);
+    });
+
     test('DELETE', () async {
       final AgattpResponse response = await Agattp().delete(
         Uri.parse('https://httpbingo.org/delete'),
@@ -249,6 +304,17 @@ void main() {
 
       expect(json['json'], isNull);
       expect(json['url'], url);
+    });
+
+    test('DELETE Json No Content', () async {
+      const String url = 'https://httpbingo.org/status/204';
+
+      final AgattpResponseJson<void> response =
+          await Agattp().deleteJson(Uri.parse(url));
+
+      expect(response.statusCode, 204);
+      expect(response.reasonPhrase, 'No Content');
+      expect(response.body, isEmpty);
     });
 
     test('Timeout', () async {

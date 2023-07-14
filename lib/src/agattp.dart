@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:agattp/agattp.dart';
+import 'package:agattp/src/agattp_method.dart';
 
 ///
 ///
@@ -17,64 +18,72 @@ typedef BadCertificateCallback = bool Function(
 ///
 class Agattp {
   final BadCertificateCallback badCertificateCallback;
+  final Duration timeout;
+  final Encoding encoding;
   final bool forceClose;
-  final Encoding encoding = utf8;
 
   ///
   ///
   ///
   Agattp({
     BadCertificateCallback? badCertificateCallback,
+    int? timeout,
+    this.encoding = utf8,
     this.forceClose = false,
-  }) : badCertificateCallback =
-            badCertificateCallback ?? ((_, __, ___) => false);
+  })  : badCertificateCallback =
+            badCertificateCallback ?? ((_, __, ___) => false),
+        timeout = Duration(milliseconds: timeout ?? 60000);
 
   ///
   ///
   ///
-  HttpClient _prepareClient() =>
-      HttpClient()..badCertificateCallback = badCertificateCallback;
+  Future<AgattpResponse> _send({
+    required AgattpMethod method,
+    required Uri uri,
+    required Map<String, String> headers,
+    String? body,
+  }) async {
+    final HttpClient client = HttpClient()
+      ..badCertificateCallback = badCertificateCallback;
 
-  ///
-  ///
-  ///
-  void _prepareHeaders(
-    HttpClientRequest request,
-    Map<String, String> headers,
-  ) {
+    late final HttpClientRequest request;
+
+    switch (method) {
+      case AgattpMethod.get:
+        request = await client.getUrl(uri);
+        break;
+      case AgattpMethod.post:
+        request = await client.postUrl(uri);
+        break;
+      case AgattpMethod.put:
+        request = await client.putUrl(uri);
+        break;
+      case AgattpMethod.delete:
+        request = await client.deleteUrl(uri);
+        break;
+      case AgattpMethod.head:
+        request = await client.headUrl(uri);
+        break;
+      case AgattpMethod.patch:
+        request = await client.patchUrl(uri);
+        break;
+    }
+
     for (final MapEntry<String, String> entry in headers.entries) {
       request.headers.set(entry.key, entry.value);
     }
-  }
-
-  ///
-  ///
-  ///
-  Future<AgattpResponse> _processResponse(HttpClientResponse response) async {
-    final String responseBody =
-        await response.transform(encoding.decoder).join();
-
-    return AgattpResponse(response, responseBody);
-  }
-
-  ///
-  ///
-  ///
-  Future<AgattpResponse> _send(
-    HttpClient client,
-    HttpClientRequest request,
-    Map<String, String> headers,
-    String? body,
-  ) async {
-    _prepareHeaders(request, headers);
 
     if (body != null) {
       request.write(body);
     }
 
-    final HttpClientResponse response = await request.close();
+    final HttpClientResponse response = await request.close().timeout(timeout);
 
-    final AgattpResponse agattpResponse = await _processResponse(response);
+    final String responseBody =
+        await response.transform(encoding.decoder).join();
+
+    final AgattpResponse agattpResponse =
+        AgattpResponse(response, responseBody);
 
     client.close(force: forceClose);
 
@@ -87,11 +96,12 @@ class Agattp {
   Future<AgattpResponse> get(
     Uri uri, {
     Map<String, String> headers = const <String, String>{},
-  }) async {
-    final HttpClient client = _prepareClient();
-    final HttpClientRequest request = await client.getUrl(uri);
-    return _send(client, request, headers, null);
-  }
+  }) async =>
+      _send(
+        method: AgattpMethod.get,
+        uri: uri,
+        headers: headers,
+      );
 
   ///
   ///
@@ -99,11 +109,12 @@ class Agattp {
   Future<AgattpResponse> head(
     Uri uri, {
     Map<String, String> headers = const <String, String>{},
-  }) async {
-    final HttpClient client = _prepareClient();
-    final HttpClientRequest request = await client.headUrl(uri);
-    return _send(client, request, headers, null);
-  }
+  }) async =>
+      _send(
+        method: AgattpMethod.head,
+        uri: uri,
+        headers: headers,
+      );
 
   ///
   ///
@@ -112,11 +123,13 @@ class Agattp {
     Uri uri, {
     Map<String, String> headers = const <String, String>{},
     String? body,
-  }) async {
-    final HttpClient client = _prepareClient();
-    final HttpClientRequest request = await client.postUrl(uri);
-    return _send(client, request, headers, body);
-  }
+  }) async =>
+      _send(
+        method: AgattpMethod.post,
+        uri: uri,
+        headers: headers,
+        body: body,
+      );
 
   ///
   ///
@@ -125,11 +138,13 @@ class Agattp {
     Uri uri, {
     Map<String, String> headers = const <String, String>{},
     String? body,
-  }) async {
-    final HttpClient client = _prepareClient();
-    final HttpClientRequest request = await client.putUrl(uri);
-    return _send(client, request, headers, body);
-  }
+  }) async =>
+      _send(
+        method: AgattpMethod.put,
+        uri: uri,
+        headers: headers,
+        body: body,
+      );
 
   ///
   ///
@@ -138,11 +153,13 @@ class Agattp {
     Uri uri, {
     Map<String, String> headers = const <String, String>{},
     String? body,
-  }) async {
-    final HttpClient client = _prepareClient();
-    final HttpClientRequest request = await client.patchUrl(uri);
-    return _send(client, request, headers, body);
-  }
+  }) async =>
+      _send(
+        method: AgattpMethod.patch,
+        uri: uri,
+        headers: headers,
+        body: body,
+      );
 
   ///
   ///
@@ -152,8 +169,11 @@ class Agattp {
     Map<String, String> headers = const <String, String>{},
     String? body,
   }) async {
-    final HttpClient client = _prepareClient();
-    final HttpClientRequest request = await client.deleteUrl(uri);
-    return _send(client, request, headers, body);
+    return _send(
+      method: AgattpMethod.delete,
+      uri: uri,
+      headers: headers,
+      body: body,
+    );
   }
 }

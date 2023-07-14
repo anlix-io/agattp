@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:agattp/agattp.dart';
@@ -90,6 +91,20 @@ void main() {
       expect(response.statusCode, 200);
       expect(response.reasonPhrase, 'OK');
       expect(response.body, contains('"data": "Hello World!"'));
+    });
+
+    test('Timeout', () async {
+      try {
+        await Agattp(timeout: 2000).get(
+          Uri.parse('https://httpbingo.org/delay/5'),
+          headers: <String, String>{
+            HttpHeaders.contentTypeHeader: 'text/plain',
+          },
+        );
+        fail('Should have thrown TimeoutException');
+      } on Exception catch (e) {
+        expect(e, isA<TimeoutException>());
+      }
     });
   });
 }

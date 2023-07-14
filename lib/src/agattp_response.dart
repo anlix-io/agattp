@@ -56,5 +56,11 @@ class AgattpResponseJson<T> extends AgattpResponse {
   ///
   ///
   ///
+  AgattpResponseJson.fromAgattpResponse(AgattpResponse response)
+      : super(response.clientResponse, response.body);
+
+  ///
+  ///
+  ///
   T get json => jsonDecode(body) as T;
 }

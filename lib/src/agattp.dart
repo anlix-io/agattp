@@ -37,6 +37,25 @@ class Agattp {
   ///
   ///
   ///
+  Map<String, String> _jsonHeaders({
+    required String? bearerToken,
+    required Map<String, String> extraHeaders,
+    required bool hasBody,
+  }) {
+    return <String, String>{
+      HttpHeaders.acceptCharsetHeader: 'application/json',
+      if (hasBody)
+        HttpHeaders.contentTypeHeader:
+            'application/json; charset=${encoding.name}',
+      if (bearerToken != null && bearerToken.isNotEmpty)
+        HttpHeaders.authorizationHeader: 'Bearer $bearerToken',
+      ...extraHeaders,
+    };
+  }
+
+  ///
+  ///
+  ///
   Future<AgattpResponse> _send<T>({
     required AgattpMethod method,
     required Uri uri,
@@ -110,18 +129,17 @@ class Agattp {
     Uri uri, {
     String? bearerToken,
     Map<String, String> extraHeaders = const <String, String>{},
-  }) async {
-    final Map<String, String> headers = <String, String>{
-      HttpHeaders.acceptCharsetHeader: 'application/json',
-      if (bearerToken != null && bearerToken.isNotEmpty)
-        HttpHeaders.authorizationHeader: 'Bearer $bearerToken',
-      ...extraHeaders,
-    };
-
-    final AgattpResponse response = await post(uri, headers: headers);
-
-    return AgattpResponseJson<T>(response.clientResponse, response.body);
-  }
+  }) async =>
+      AgattpResponseJson<T>.fromAgattpResponse(
+        await get(
+          uri,
+          headers: _jsonHeaders(
+            bearerToken: bearerToken,
+            extraHeaders: extraHeaders,
+            hasBody: false,
+          ),
+        ),
+      );
 
   ///
   ///
@@ -134,6 +152,25 @@ class Agattp {
         method: AgattpMethod.head,
         uri: uri,
         headers: headers,
+      );
+
+  ///
+  ///
+  ///
+  Future<AgattpResponseJson<T>> headJson<T>(
+    Uri uri, {
+    String? bearerToken,
+    Map<String, String> extraHeaders = const <String, String>{},
+  }) async =>
+      AgattpResponseJson<T>.fromAgattpResponse(
+        await head(
+          uri,
+          headers: _jsonHeaders(
+            bearerToken: bearerToken,
+            extraHeaders: extraHeaders,
+            hasBody: false,
+          ),
+        ),
       );
 
   ///
@@ -160,21 +197,17 @@ class Agattp {
     String? bearerToken,
     Map<String, String> extraHeaders = const <String, String>{},
   }) async {
-    final Map<String, String> headers = <String, String>{
-      HttpHeaders.acceptCharsetHeader: 'application/json',
-      HttpHeaders.contentTypeHeader:
-          'application/json; charset=${encoding.name}',
-      if (bearerToken != null && bearerToken.isNotEmpty)
-        HttpHeaders.authorizationHeader: 'Bearer $bearerToken',
-      ...extraHeaders,
-    };
-
-    final String jsonBody = jsonEncode(body);
-
-    final AgattpResponse response =
-        await post(uri, headers: headers, body: jsonBody);
-
-    return AgattpResponseJson<T>(response.clientResponse, response.body);
+    return AgattpResponseJson<T>.fromAgattpResponse(
+      await post(
+        uri,
+        headers: _jsonHeaders(
+          bearerToken: bearerToken,
+          extraHeaders: extraHeaders,
+          hasBody: body != null,
+        ),
+        body: jsonEncode(body),
+      ),
+    );
   }
 
   ///
@@ -195,6 +228,28 @@ class Agattp {
   ///
   ///
   ///
+  Future<AgattpResponseJson<T>> putJson<T>(
+    Uri uri, {
+    required dynamic body,
+    String? bearerToken,
+    Map<String, String> extraHeaders = const <String, String>{},
+  }) async {
+    return AgattpResponseJson<T>.fromAgattpResponse(
+      await put(
+        uri,
+        headers: _jsonHeaders(
+          bearerToken: bearerToken,
+          extraHeaders: extraHeaders,
+          hasBody: body != null,
+        ),
+        body: jsonEncode(body),
+      ),
+    );
+  }
+
+  ///
+  ///
+  ///
   Future<AgattpResponse> patch(
     Uri uri, {
     Map<String, String> headers = const <String, String>{},
@@ -210,6 +265,28 @@ class Agattp {
   ///
   ///
   ///
+  Future<AgattpResponseJson<T>> patchJson<T>(
+    Uri uri, {
+    required dynamic body,
+    String? bearerToken,
+    Map<String, String> extraHeaders = const <String, String>{},
+  }) async {
+    return AgattpResponseJson<T>.fromAgattpResponse(
+      await patch(
+        uri,
+        headers: _jsonHeaders(
+          bearerToken: bearerToken,
+          extraHeaders: extraHeaders,
+          hasBody: body != null,
+        ),
+        body: jsonEncode(body),
+      ),
+    );
+  }
+
+  ///
+  ///
+  ///
   Future<AgattpResponse> delete(
     Uri uri, {
     Map<String, String> headers = const <String, String>{},
@@ -220,6 +297,28 @@ class Agattp {
       uri: uri,
       headers: headers,
       body: body,
+    );
+  }
+
+  ///
+  ///
+  ///
+  Future<AgattpResponseJson<T>> deleteJson<T>(
+    Uri uri, {
+    required dynamic body,
+    String? bearerToken,
+    Map<String, String> extraHeaders = const <String, String>{},
+  }) async {
+    return AgattpResponseJson<T>.fromAgattpResponse(
+      await delete(
+        uri,
+        headers: _jsonHeaders(
+          bearerToken: bearerToken,
+          extraHeaders: extraHeaders,
+          hasBody: body != null,
+        ),
+        body: jsonEncode(body),
+      ),
     );
   }
 }

@@ -41,10 +41,10 @@ void main() async {
   );
 
   /// POST with JSON body and JSON response
-  final AgattpResponseJson<Map<dynamic, dynamic>> response =
+  final AgattpResponseJson<Map<String, dynamic>> response =
   await Agattp().postJson(
     Uri.parse('https://httpbingo.org/post'),
-    body: <dynamic, dynamic>{
+    body: <String, dynamic>{
       'message': 'Hello World!',
     },
   );

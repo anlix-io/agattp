@@ -28,6 +28,17 @@ void main() {
       expect(response.body, isEmpty);
     });
 
+    test('GET Json', () async {
+      const String url = 'https://httpbingo.org/get?test=ok';
+
+      final AgattpResponseJson<Map<String, dynamic>> response =
+          await Agattp().getJson(Uri.parse(url));
+
+      expect(response.statusCode, 200);
+      expect(response.reasonPhrase, 'OK');
+      expect(response.json['url'], url);
+    });
+
     test('HEAD', () async {
       final AgattpResponse response =
           await Agattp().head(Uri.parse('https://httpbingo.org/head'));

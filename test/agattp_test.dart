@@ -52,7 +52,9 @@ void main() {
     });
 
     test('POST Json', () async {
-      final Map<dynamic, dynamic> body = {'message': 'Hello World!'};
+      final Map<dynamic, dynamic> body = <dynamic, dynamic>{
+        'message': 'Hello World!',
+      };
 
       final AgattpResponseJson<Map<dynamic, dynamic>> response =
           await Agattp().postJson(

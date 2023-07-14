@@ -1,4 +1,4 @@
-![Anlix](https://anlix.io/wp-content/uploads/2020/05/logo-anlix-horizontal-200x48-1.png "Anlix")
+![Anlix](https://anlix.io/wp-content/uploads/2020/05/anlix-horizontal_verde.png "Anlix")
 
 [![Build With Love](https://img.shields.io/badge/%20built%20with-%20%E2%9D%A4-ff69b4.svg)](https://github.com/anlix-io/agattp/stargazers)
 [![Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.github.com%2Frepos%2Fanlix-io%2Fagahhtp%2Freleases%2Flatest&query=%24.name&label=version&color=orange)](https://github.com/anlix-io/agattp/releases/latest)
@@ -29,7 +29,7 @@ void main() async {
 
   /// GET
   final AgattpResponse response =
-  await Agattp().get(Uri.parse('https://httpbingo.org/status/200'));
+    await Agattp().get(Uri.parse('https://httpbingo.org/status/200'));
 
   /// POST
   final AgattpResponse response = await Agattp().post(
@@ -42,13 +42,15 @@ void main() async {
 
   /// POST with JSON body and JSON response
   final AgattpResponseJson<Map<String, dynamic>> response =
-  await Agattp().postJson(
-    Uri.parse('https://httpbingo.org/post'),
-    body: <String, dynamic>{
-      'message': 'Hello World!',
-    },
-  );
+    await Agattp().postJson(
+      Uri.parse('https://httpbingo.org/post'),
+      body: <String, dynamic>{
+        'message': 'Hello World!',
+      },
+    );
 }
 ```
+
 ---
+
 ### https://anlix.io

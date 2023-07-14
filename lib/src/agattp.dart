@@ -193,7 +193,7 @@ class Agattp {
   ///
   Future<AgattpResponseJson<T>> postJson<T>(
     Uri uri, {
-    required dynamic body,
+    dynamic body,
     String? bearerToken,
     Map<String, String> extraHeaders = const <String, String>{},
   }) async {
@@ -230,7 +230,7 @@ class Agattp {
   ///
   Future<AgattpResponseJson<T>> putJson<T>(
     Uri uri, {
-    required dynamic body,
+    dynamic body,
     String? bearerToken,
     Map<String, String> extraHeaders = const <String, String>{},
   }) async {
@@ -267,7 +267,7 @@ class Agattp {
   ///
   Future<AgattpResponseJson<T>> patchJson<T>(
     Uri uri, {
-    required dynamic body,
+    dynamic body,
     String? bearerToken,
     Map<String, String> extraHeaders = const <String, String>{},
   }) async {
@@ -305,7 +305,7 @@ class Agattp {
   ///
   Future<AgattpResponseJson<T>> deleteJson<T>(
     Uri uri, {
-    required dynamic body,
+    dynamic body,
     String? bearerToken,
     Map<String, String> extraHeaders = const <String, String>{},
   }) async {

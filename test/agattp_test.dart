@@ -48,6 +48,17 @@ void main() {
       expect(response.body, isEmpty);
     });
 
+    test('HEAD Json', () async {
+      const String url = 'https://httpbingo.org/head?test=ok';
+
+      final AgattpResponseJson<Map<String, dynamic>> response =
+          await Agattp().headJson(Uri.parse(url));
+
+      expect(response.statusCode, 200);
+      expect(response.reasonPhrase, 'OK');
+      expect(response.body, isEmpty);
+    });
+
     test('POST', () async {
       final AgattpResponse response = await Agattp().post(
         Uri.parse('https://httpbingo.org/post'),
@@ -62,20 +73,38 @@ void main() {
       expect(response.body, contains('"data": "Hello World!"'));
     });
 
-    test('POST Json', () async {
-      final Map<String, dynamic> body = <String, dynamic>{
+    test('POST Json With Body', () async {
+      const String url = 'https://httpbingo.org/post?test=ok';
+
+      const Map<String, dynamic> body = <String, dynamic>{
         'message': 'Hello World!',
       };
 
       final AgattpResponseJson<Map<String, dynamic>> response =
-          await Agattp().postJson(
-        Uri.parse('https://httpbingo.org/post'),
-        body: body,
-      );
+          await Agattp().postJson(Uri.parse(url), body: body);
 
       expect(response.statusCode, 200);
       expect(response.reasonPhrase, 'OK');
-      expect(response.json['json'], body);
+
+      final Map<String, dynamic> json = response.json;
+
+      expect(json['url'], url);
+      expect(json['json'], body);
+    });
+
+    test('POST Json Without Body', () async {
+      const String url = 'https://httpbingo.org/post?test=ok';
+
+      final AgattpResponseJson<Map<String, dynamic>> response =
+          await Agattp().postJson(Uri.parse(url));
+
+      expect(response.statusCode, 200);
+      expect(response.reasonPhrase, 'OK');
+
+      final Map<String, dynamic> json = response.json;
+
+      expect(json['json'], isNull);
+      expect(json['url'], url);
     });
 
     test('PUT', () async {
@@ -92,6 +121,40 @@ void main() {
       expect(response.body, contains('"data": "Hello World!"'));
     });
 
+    test('PUT Json With Body', () async {
+      const String url = 'https://httpbingo.org/put?test=ok';
+
+      const Map<String, dynamic> body = <String, dynamic>{
+        'message': 'Hello World!',
+      };
+
+      final AgattpResponseJson<Map<String, dynamic>> response =
+          await Agattp().putJson(Uri.parse(url), body: body);
+
+      expect(response.statusCode, 200);
+      expect(response.reasonPhrase, 'OK');
+
+      final Map<String, dynamic> json = response.json;
+
+      expect(json['json'], body);
+      expect(json['url'], url);
+    });
+
+    test('PUT Json Without Body', () async {
+      const String url = 'https://httpbingo.org/put?test=ok';
+
+      final AgattpResponseJson<Map<String, dynamic>> response =
+          await Agattp().putJson(Uri.parse(url));
+
+      expect(response.statusCode, 200);
+      expect(response.reasonPhrase, 'OK');
+
+      final Map<String, dynamic> json = response.json;
+
+      expect(json['json'], isNull);
+      expect(json['url'], url);
+    });
+
     test('PATCH', () async {
       final AgattpResponse response = await Agattp().patch(
         Uri.parse('https://httpbingo.org/patch'),
@@ -106,6 +169,40 @@ void main() {
       expect(response.body, contains('"data": "Hello World!"'));
     });
 
+    test('PATCH Json With Body', () async {
+      const String url = 'https://httpbingo.org/patch?test=ok';
+
+      const Map<String, dynamic> body = <String, dynamic>{
+        'message': 'Hello World!',
+      };
+
+      final AgattpResponseJson<Map<String, dynamic>> response =
+          await Agattp().patchJson(Uri.parse(url), body: body);
+
+      expect(response.statusCode, 200);
+      expect(response.reasonPhrase, 'OK');
+
+      final Map<String, dynamic> json = response.json;
+
+      expect(json['json'], body);
+      expect(json['url'], url);
+    });
+
+    test('PATCH Json Without Body', () async {
+      const String url = 'https://httpbingo.org/patch?test=ok';
+
+      final AgattpResponseJson<Map<String, dynamic>> response =
+          await Agattp().patchJson(Uri.parse(url));
+
+      expect(response.statusCode, 200);
+      expect(response.reasonPhrase, 'OK');
+
+      final Map<String, dynamic> json = response.json;
+
+      expect(json['json'], isNull);
+      expect(json['url'], url);
+    });
+
     test('DELETE', () async {
       final AgattpResponse response = await Agattp().delete(
         Uri.parse('https://httpbingo.org/delete'),
@@ -118,6 +215,40 @@ void main() {
       expect(response.statusCode, 200);
       expect(response.reasonPhrase, 'OK');
       expect(response.body, contains('"data": "Hello World!"'));
+    });
+
+    test('DELETE Json With Body', () async {
+      const String url = 'https://httpbingo.org/delete?test=ok';
+
+      const Map<String, dynamic> body = <String, dynamic>{
+        'message': 'Hello World!',
+      };
+
+      final AgattpResponseJson<Map<String, dynamic>> response =
+          await Agattp().deleteJson(Uri.parse(url), body: body);
+
+      expect(response.statusCode, 200);
+      expect(response.reasonPhrase, 'OK');
+
+      final Map<String, dynamic> json = response.json;
+
+      expect(json['json'], body);
+      expect(json['url'], url);
+    });
+
+    test('DELETE Json Without Body', () async {
+      const String url = 'https://httpbingo.org/delete?test=ok';
+
+      final AgattpResponseJson<Map<String, dynamic>> response =
+          await Agattp().deleteJson(Uri.parse(url));
+
+      expect(response.statusCode, 200);
+      expect(response.reasonPhrase, 'OK');
+
+      final Map<String, dynamic> json = response.json;
+
+      expect(json['json'], isNull);
+      expect(json['url'], url);
     });
 
     test('Timeout', () async {

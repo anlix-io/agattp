@@ -5,7 +5,7 @@ import 'dart:io';
 ///
 ///
 void main() {
-  final Map<String, String> curt = <String, String>{
+  final Map<String, String> agattp = <String, String>{
     'name': 'agattp',
     'rootUri': '../',
     'packageUri': 'lib/',
@@ -14,7 +14,7 @@ void main() {
 
   final Map<String, dynamic> package = <String, dynamic>{
     'configVersion': 2,
-    'packages': <Map<String, String>>[curt],
+    'packages': <Map<String, String>>[agattp],
     'generated': DateTime.now().toIso8601String(),
     'generator': 'pub',
     'generatorVersion': '2.0.0',

@@ -37,7 +37,7 @@ class Agattp {
   ///
   ///
   ///
-  Future<AgattpResponse> _send({
+  Future<AgattpResponse> _send<T>({
     required AgattpMethod method,
     required Uri uri,
     required Map<String, String> headers,
@@ -130,6 +130,32 @@ class Agattp {
         headers: headers,
         body: body,
       );
+
+  ///
+  ///
+  ///
+  Future<AgattpResponseJson<T>> postJson<T>(
+    Uri uri, {
+    required dynamic body,
+    String? bearerToken,
+    Map<String, String> extraHeaders = const <String, String>{},
+  }) async {
+    final Map<String, String> headers = <String, String>{
+      HttpHeaders.acceptCharsetHeader: 'application/json',
+      HttpHeaders.contentTypeHeader:
+          'application/json; charset=${encoding.name}',
+      if (bearerToken != null && bearerToken.isNotEmpty)
+        HttpHeaders.authorizationHeader: 'Bearer $bearerToken',
+      ...extraHeaders,
+    };
+
+    final String jsonBody = jsonEncode(body);
+
+    final AgattpResponse response =
+        await post(uri, headers: headers, body: jsonBody);
+
+    return AgattpResponseJson<T>(response.clientResponse, response.body);
+  }
 
   ///
   ///

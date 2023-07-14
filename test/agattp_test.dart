@@ -51,6 +51,20 @@ void main() {
       expect(response.body, contains('"data": "Hello World!"'));
     });
 
+    test('POST Json', () async {
+      final Map<dynamic, dynamic> body = {'message': 'Hello World!'};
+
+      final AgattpResponseJson<Map<dynamic, dynamic>> response =
+          await Agattp().postJson(
+        Uri.parse('https://httpbingo.org/post'),
+        body: body,
+      );
+
+      expect(response.statusCode, 200);
+      expect(response.reasonPhrase, 'OK');
+      expect(response.json['json'], body);
+    });
+
     test('PUT', () async {
       final AgattpResponse response = await Agattp().put(
         Uri.parse('https://httpbingo.org/put'),

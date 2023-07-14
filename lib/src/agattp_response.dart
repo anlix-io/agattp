@@ -1,44 +1,60 @@
+import 'dart:convert';
 import 'dart:io';
 
 ///
 ///
 ///
 class AgattpResponse {
-  final HttpClientResponse response;
+  final HttpClientResponse clientResponse;
   final String body;
 
   ///
   ///
   ///
-  AgattpResponse(this.response, this.body);
+  AgattpResponse(this.clientResponse, this.body);
 
   ///
   ///
   ///
-  int get statusCode => response.statusCode;
+  int get statusCode => clientResponse.statusCode;
 
   ///
   ///
   ///
-  String get reasonPhrase => response.reasonPhrase;
+  String get reasonPhrase => clientResponse.reasonPhrase;
 
   ///
   ///
   ///
-  bool get isRedirect => response.isRedirect;
+  bool get isRedirect => clientResponse.isRedirect;
 
   ///
   ///
   ///
-  bool get isPersistentConnection => response.persistentConnection;
+  bool get isPersistentConnection => clientResponse.persistentConnection;
 
   ///
   ///
   ///
-  HttpHeaders get headers => response.headers;
+  HttpHeaders get headers => clientResponse.headers;
 
   ///
   ///
   ///
-  List<Cookie> get cookies => response.cookies;
+  List<Cookie> get cookies => clientResponse.cookies;
+}
+
+///
+///
+///
+class AgattpResponseJson<T> extends AgattpResponse {
+  ///
+  ///
+  ///
+  AgattpResponseJson(super.clientResponse, super.body);
+
+  ///
+  ///
+  ///
+  T get json => jsonDecode(body) as T;
 }

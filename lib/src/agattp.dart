@@ -106,6 +106,26 @@ class Agattp {
   ///
   ///
   ///
+  Future<AgattpResponseJson<T>> getJson<T>(
+    Uri uri, {
+    String? bearerToken,
+    Map<String, String> extraHeaders = const <String, String>{},
+  }) async {
+    final Map<String, String> headers = <String, String>{
+      HttpHeaders.acceptCharsetHeader: 'application/json',
+      if (bearerToken != null && bearerToken.isNotEmpty)
+        HttpHeaders.authorizationHeader: 'Bearer $bearerToken',
+      ...extraHeaders,
+    };
+
+    final AgattpResponse response = await post(uri, headers: headers);
+
+    return AgattpResponseJson<T>(response.clientResponse, response.body);
+  }
+
+  ///
+  ///
+  ///
   Future<AgattpResponse> head(
     Uri uri, {
     Map<String, String> headers = const <String, String>{},

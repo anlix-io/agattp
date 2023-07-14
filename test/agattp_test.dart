@@ -52,11 +52,11 @@ void main() {
     });
 
     test('POST Json', () async {
-      final Map<dynamic, dynamic> body = <dynamic, dynamic>{
+      final Map<String, dynamic> body = <String, dynamic>{
         'message': 'Hello World!',
       };
 
-      final AgattpResponseJson<Map<dynamic, dynamic>> response =
+      final AgattpResponseJson<Map<String, dynamic>> response =
           await Agattp().postJson(
         Uri.parse('https://httpbingo.org/post'),
         body: body,

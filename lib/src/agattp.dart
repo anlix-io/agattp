@@ -2,16 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:agattp/agattp.dart';
-import 'package:agattp/src/agattp_method.dart';
 
-///
-///
-///
-typedef BadCertificateCallback = bool Function(
-  X509Certificate cert,
-  String host,
-  int port,
-);
+import 'package:agattp/src/agattp_call.dart'
+    if (dart.library.io) 'package:agattp/src/native/agattp_call.dart'
+    if (dart.library.js) 'package:agattp/src/web/agattp_call.dart';
+
+import 'package:agattp/src/agattp_method.dart';
 
 ///
 ///
@@ -56,70 +52,15 @@ class Agattp {
   ///
   ///
   ///
-  Future<AgattpResponse> _send<T>({
-    required AgattpMethod method,
-    required Uri uri,
-    required Map<String, String> headers,
-    String? body,
-  }) async {
-    final HttpClient client = HttpClient()
-      ..badCertificateCallback = badCertificateCallback;
-
-    late final HttpClientRequest request;
-
-    switch (method) {
-      case AgattpMethod.get:
-        request = await client.getUrl(uri);
-        break;
-      case AgattpMethod.post:
-        request = await client.postUrl(uri);
-        break;
-      case AgattpMethod.put:
-        request = await client.putUrl(uri);
-        break;
-      case AgattpMethod.delete:
-        request = await client.deleteUrl(uri);
-        break;
-      case AgattpMethod.head:
-        request = await client.headUrl(uri);
-        break;
-      case AgattpMethod.patch:
-        request = await client.patchUrl(uri);
-        break;
-    }
-
-    for (final MapEntry<String, String> entry in headers.entries) {
-      request.headers.set(entry.key, entry.value);
-    }
-
-    if (body != null) {
-      request.write(body);
-    }
-
-    final HttpClientResponse response = await request.close().timeout(timeout);
-
-    final String responseBody =
-        await response.transform(encoding.decoder).join();
-
-    final AgattpResponse agattpResponse =
-        AgattpResponse(response, responseBody);
-
-    client.close(force: forceClose);
-
-    return agattpResponse;
-  }
-
-  ///
-  ///
-  ///
   Future<AgattpResponse> get(
     Uri uri, {
     Map<String, String> headers = const <String, String>{},
-  }) async =>
-      _send(
+  }) =>
+      AgattpCall(this).send(
         method: AgattpMethod.get,
         uri: uri,
         headers: headers,
+        body: null,
       );
 
   ///
@@ -130,7 +71,7 @@ class Agattp {
     String? bearerToken,
     Map<String, String> extraHeaders = const <String, String>{},
   }) async =>
-      AgattpResponseJson<T>.fromAgattpResponse(
+      AgattpResponseJson<T>(
         await get(
           uri,
           headers: _jsonHeaders(
@@ -148,10 +89,11 @@ class Agattp {
     Uri uri, {
     Map<String, String> headers = const <String, String>{},
   }) async =>
-      _send(
+      AgattpCall(this).send(
         method: AgattpMethod.head,
         uri: uri,
         headers: headers,
+        body: null,
       );
 
   ///
@@ -162,7 +104,7 @@ class Agattp {
     String? bearerToken,
     Map<String, String> extraHeaders = const <String, String>{},
   }) async =>
-      AgattpResponseJson<T>.fromAgattpResponse(
+      AgattpResponseJson<T>(
         await head(
           uri,
           headers: _jsonHeaders(
@@ -181,7 +123,7 @@ class Agattp {
     Map<String, String> headers = const <String, String>{},
     String? body,
   }) async =>
-      _send(
+      AgattpCall(this).send(
         method: AgattpMethod.post,
         uri: uri,
         headers: headers,
@@ -197,7 +139,7 @@ class Agattp {
     String? bearerToken,
     Map<String, String> extraHeaders = const <String, String>{},
   }) async {
-    return AgattpResponseJson<T>.fromAgattpResponse(
+    return AgattpResponseJson<T>(
       await post(
         uri,
         headers: _jsonHeaders(
@@ -218,7 +160,7 @@ class Agattp {
     Map<String, String> headers = const <String, String>{},
     String? body,
   }) async =>
-      _send(
+      AgattpCall(this).send(
         method: AgattpMethod.put,
         uri: uri,
         headers: headers,
@@ -234,7 +176,7 @@ class Agattp {
     String? bearerToken,
     Map<String, String> extraHeaders = const <String, String>{},
   }) async {
-    return AgattpResponseJson<T>.fromAgattpResponse(
+    return AgattpResponseJson<T>(
       await put(
         uri,
         headers: _jsonHeaders(
@@ -255,7 +197,7 @@ class Agattp {
     Map<String, String> headers = const <String, String>{},
     String? body,
   }) async =>
-      _send(
+      AgattpCall(this).send(
         method: AgattpMethod.patch,
         uri: uri,
         headers: headers,
@@ -271,7 +213,7 @@ class Agattp {
     String? bearerToken,
     Map<String, String> extraHeaders = const <String, String>{},
   }) async {
-    return AgattpResponseJson<T>.fromAgattpResponse(
+    return AgattpResponseJson<T>(
       await patch(
         uri,
         headers: _jsonHeaders(
@@ -292,7 +234,7 @@ class Agattp {
     Map<String, String> headers = const <String, String>{},
     String? body,
   }) async {
-    return _send(
+    return AgattpCall(this).send(
       method: AgattpMethod.delete,
       uri: uri,
       headers: headers,
@@ -309,7 +251,7 @@ class Agattp {
     String? bearerToken,
     Map<String, String> extraHeaders = const <String, String>{},
   }) async {
-    return AgattpResponseJson<T>.fromAgattpResponse(
+    return AgattpResponseJson<T>(
       await delete(
         uri,
         headers: _jsonHeaders(

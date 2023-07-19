@@ -8,6 +8,8 @@
 
 # Anlix Gateway Alternative Text Transfer Protocol (agattp)
 
+Anlix Gateway Alternative Text Transfer Protocol is a package to standardize and make easy the processing of HTTP requests.
+
 ## How to use
 
 ### Add the package to pubspec.yaml

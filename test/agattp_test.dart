@@ -17,6 +17,9 @@ void main() {
       expect(response.statusCode, 200);
       expect(response.reasonPhrase, 'OK');
       expect(response.isRedirect, false);
+      expect(response.isPersistentConnection, true);
+      expect(response.headers, isA<HttpHeaders>());
+      expect(response.cookies, isEmpty);
       expect(response.body, isEmpty);
     });
 
@@ -326,6 +329,33 @@ void main() {
       expect(response.reasonPhrase, 'Found');
       expect(response.isRedirect, true);
       expect(response.body, isEmpty);
+    });
+
+    test('Bearer Token', () async {
+      final String token =
+          DateTime.now().microsecondsSinceEpoch.toRadixString(16).toLowerCase();
+
+      final AgattpResponseJson<Map<String, dynamic>> response =
+          await Agattp().getJson(
+        Uri.parse('https://httpbingo.org/bearer'),
+        bearerToken: token,
+      );
+
+      expect(response.statusCode, 200);
+      expect(response.reasonPhrase, 'OK');
+      expect(response.isRedirect, false);
+      expect(response.json['authenticated'], true);
+      expect(response.json['token'], token);
+    });
+
+    test('No Bearer Token', () async {
+      final AgattpResponseJson<Map<String, dynamic>> response =
+          await Agattp().getJson(Uri.parse('https://httpbingo.org/bearer'));
+
+      expect(response.statusCode, 401);
+      expect(response.reasonPhrase, 'Unauthorized');
+      expect(response.isRedirect, false);
+      expect(response.json, isNotEmpty);
     });
 
     test('Timeout', () async {

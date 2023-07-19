@@ -18,11 +18,12 @@ class AgattpCall extends AgattpAbstractCall {
   ///
   ///
   @override
-  Future<AgattpResponse> send<T>({
+  Future<AgattpResponse> send({
     required AgattpMethod method,
     required Uri uri,
     required Map<String, String> headers,
     required String? body,
+    required int? timeout,
   }) async {
     late final Response response;
 
@@ -32,7 +33,9 @@ class AgattpCall extends AgattpAbstractCall {
         response = await get(
           uri,
           headers: headers,
-        ).timeout(parent.timeout);
+        ).timeout(
+          timeout == null ? parent.timeout : Duration(milliseconds: timeout),
+        );
         break;
 
       /// POST
@@ -42,7 +45,9 @@ class AgattpCall extends AgattpAbstractCall {
           headers: headers,
           body: body,
           encoding: parent.encoding,
-        ).timeout(parent.timeout);
+        ).timeout(
+          timeout == null ? parent.timeout : Duration(milliseconds: timeout),
+        );
         break;
 
       /// PUT
@@ -52,7 +57,9 @@ class AgattpCall extends AgattpAbstractCall {
           headers: headers,
           body: body,
           encoding: parent.encoding,
-        ).timeout(parent.timeout);
+        ).timeout(
+          timeout == null ? parent.timeout : Duration(milliseconds: timeout),
+        );
         break;
 
       /// DELETE
@@ -62,7 +69,9 @@ class AgattpCall extends AgattpAbstractCall {
           headers: headers,
           body: body,
           encoding: parent.encoding,
-        ).timeout(parent.timeout);
+        ).timeout(
+          timeout == null ? parent.timeout : Duration(milliseconds: timeout),
+        );
         break;
 
       /// HEAD
@@ -70,7 +79,9 @@ class AgattpCall extends AgattpAbstractCall {
         response = await head(
           uri,
           headers: headers,
-        ).timeout(parent.timeout);
+        ).timeout(
+          timeout == null ? parent.timeout : Duration(milliseconds: timeout),
+        );
         break;
 
       /// PATCH
@@ -80,7 +91,9 @@ class AgattpCall extends AgattpAbstractCall {
           headers: headers,
           body: body,
           encoding: parent.encoding,
-        ).timeout(parent.timeout);
+        ).timeout(
+          timeout == null ? parent.timeout : Duration(milliseconds: timeout),
+        );
         break;
     }
 

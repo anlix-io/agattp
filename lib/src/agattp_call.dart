@@ -15,11 +15,12 @@ class AgattpCall extends AgattpAbstractCall {
   ///
   ///
   @override
-  Future<AgattpResponse> send<T>({
+  Future<AgattpResponse> send({
     required AgattpMethod method,
     required Uri uri,
     required Map<String, String> headers,
     required String? body,
+    required int? timeout,
   }) async {
     throw UnimplementedError('AgattpStubCall.send() is not implemented.');
   }

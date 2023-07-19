@@ -16,10 +16,11 @@ abstract class AgattpAbstractCall {
   ///
   ///
   ///
-  Future<AgattpResponse> send<T>({
+  Future<AgattpResponse> send({
     required AgattpMethod method,
     required Uri uri,
     required Map<String, String> headers,
     required String? body,
+    required int? timeout,
   });
 }

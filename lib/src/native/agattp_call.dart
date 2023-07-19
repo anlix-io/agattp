@@ -14,12 +14,16 @@ class AgattpCall extends AgattpAbstractCall {
   ///
   AgattpCall(super.parent);
 
+  ///
+  ///
+  ///
   @override
-  Future<AgattpResponse> send<T>({
+  Future<AgattpResponse> send({
     required AgattpMethod method,
     required Uri uri,
     required Map<String, String> headers,
-    String? body,
+    required String? body,
+    required int? timeout,
   }) async {
     final HttpClient client = HttpClient()
       ..badCertificateCallback = parent.badCertificateCallback;
@@ -66,8 +70,9 @@ class AgattpCall extends AgattpAbstractCall {
       request.write(body);
     }
 
-    final HttpClientResponse response =
-        await request.close().timeout(parent.timeout);
+    final HttpClientResponse response = await request.close().timeout(
+          timeout == null ? parent.timeout : Duration(milliseconds: timeout),
+        );
 
     final String responseBody =
         await response.transform(parent.encoding.decoder).join();

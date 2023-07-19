@@ -62,6 +62,8 @@ class AgattpCall extends AgattpAbstractCall {
         break;
     }
 
+    request.followRedirects = parent.followRedirects;
+
     for (final MapEntry<String, String> entry in headers.entries) {
       request.headers.set(entry.key, entry.value);
     }

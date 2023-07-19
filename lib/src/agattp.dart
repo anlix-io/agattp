@@ -16,6 +16,7 @@ class Agattp {
   final BadCertificateCallback badCertificateCallback;
   final Duration timeout;
   final Encoding encoding;
+  final bool followRedirects;
   final bool forceClose;
 
   ///
@@ -25,6 +26,7 @@ class Agattp {
     BadCertificateCallback? badCertificateCallback,
     int? timeout,
     this.encoding = utf8,
+    this.followRedirects = true,
     this.forceClose = false,
   })  : badCertificateCallback =
             badCertificateCallback ?? ((_, __, ___) => false),

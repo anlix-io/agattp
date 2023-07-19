@@ -16,6 +16,7 @@ void main() {
 
       expect(response.statusCode, 200);
       expect(response.reasonPhrase, 'OK');
+      expect(response.isRedirect, false);
       expect(response.body, isEmpty);
     });
 
@@ -314,6 +315,16 @@ void main() {
 
       expect(response.statusCode, 204);
       expect(response.reasonPhrase, 'No Content');
+      expect(response.body, isEmpty);
+    });
+
+    test('Redirect', () async {
+      final AgattpResponse response = await Agattp(followRedirects: false)
+          .get(Uri.parse('https://httpbingo.org/redirect/1'));
+
+      expect(response.statusCode, 302);
+      expect(response.reasonPhrase, 'Found');
+      expect(response.isRedirect, true);
       expect(response.body, isEmpty);
     });
 

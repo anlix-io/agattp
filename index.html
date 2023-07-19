@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>agattp</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp"
+          crossorigin="anonymous">
+</head>
+<body>
+  <div class="col-lg-8 mx-auto p-4 py-md-5">
+    <main>
+<p><img src="https://anlix.io/wp-content/uploads/2020/05/anlix-horizontal_verde.png" alt="Anlix" title="Anlix" /></p>
+<p><a href="https://github.com/anlix-io/agattp/stargazers"><img src="https://img.shields.io/badge/%20built%20with-%20%E2%9D%A4-ff69b4.svg" alt="Build With Love" /></a>
+<a href="https://github.com/anlix-io/agattp/releases/latest"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.github.com%2Frepos%2Fanlix-io%2Fagahhtp%2Freleases%2Flatest&query=%24.name&label=version&color=orange" alt="Version" /></a>
+<a href="https://github.com/anlix-io/agattp/blob/main/LICENSE"><img src="https://img.shields.io/github/license/anlix-io/agattp?color=blue" alt="Licence" /></a>
+<a href="https://github.com/anlix-io/agattp/releases/latest"><img src="https://img.shields.io/github/actions/workflow/status/anlix-io/agattp/main.yml?branch=main" alt="Build" /></a>
+<a href="https://anlix-io.github.io/agattp/coverage/"><img src="https://img.shields.io/badge/coverage-report-C08EA1" alt="Coverage Report" /></a></p>
+<h1 id="anlix-gateway-alternative-text-transfer-protocol-agattp">Anlix Gateway Alternative Text Transfer Protocol (agattp)</h1>
+<p>Anlix Gateway Alternative Text Transfer Protocol is a package to standardize and make easy the processing of HTTP requests.</p>
+<h2 id="how-to-use">How to use</h2>
+<h3 id="add-the-package-to-pubspecyaml">Add the package to pubspec.yaml</h3>
+<pre><code class="language-yaml">dependencies:
+
+  # https://github.com/anlix-io/agattp
+  agattp:
+    git:
+      url: git@github.com:anlix-io/agattp.git
+      ref: dev # Latest release or tag ou branch
+</code></pre>
+<h3 id="send-requests">Send requests</h3>
+<pre><code class="language-dart">void main() async {
+
+  /// GET
+  final AgattpResponse response =
+    await Agattp().get(Uri.parse('https://httpbingo.org/status/200'));
+
+  /// POST
+  final AgattpResponse response = await Agattp().post(
+    Uri.parse('https://httpbingo.org/post'),
+    headers: &lt;String, String&gt;{
+      HttpHeaders.contentTypeHeader: 'text/plain',
+    },
+    body: 'Hello World!',
+  );
+
+  /// POST with JSON body and JSON response
+  final AgattpResponseJson&lt;Map&lt;String, dynamic&gt;&gt; response =
+    await Agattp().postJson(
+      Uri.parse('https://httpbingo.org/post'),
+      body: &lt;String, dynamic&gt;{
+        'message': 'Hello World!',
+      },
+    );
+}
+</code></pre>
+<hr />
+<h3 id="httpsanlixio"><a href="https://anlix.io">https://anlix.io</a></h3>
+
+    </main>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js" 
+          integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N" 
+          crossorigin="anonymous"></script>
+</body>
+</html>

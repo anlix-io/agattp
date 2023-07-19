@@ -3,82 +3,50 @@ import 'dart:io';
 
 import 'package:agattp/agattp.dart';
 
-///
-///
-///
-typedef BadCertificateCallback = bool Function(
-  X509Certificate cert,
-  String host,
-  int port,
-);
+import 'package:agattp/src/agattp_call.dart'
+    if (dart.library.io) 'package:agattp/src/native/agattp_call.dart'
+    if (dart.library.js) 'package:agattp/src/web/agattp_call.dart';
+
+import 'package:agattp/src/agattp_method.dart';
 
 ///
 ///
 ///
 class Agattp {
   final BadCertificateCallback badCertificateCallback;
+  final Duration timeout;
+  final Encoding encoding;
   final bool forceClose;
-  final Encoding encoding = utf8;
 
   ///
   ///
   ///
   Agattp({
     BadCertificateCallback? badCertificateCallback,
+    int? timeout,
+    this.encoding = utf8,
     this.forceClose = false,
-  }) : badCertificateCallback =
-            badCertificateCallback ?? ((_, __, ___) => false);
+  })  : badCertificateCallback =
+            badCertificateCallback ?? ((_, __, ___) => false),
+        timeout = Duration(milliseconds: timeout ?? 60000);
 
   ///
   ///
   ///
-  HttpClient _prepareClient() =>
-      HttpClient()..badCertificateCallback = badCertificateCallback;
-
-  ///
-  ///
-  ///
-  void _prepareHeaders(
-    HttpClientRequest request,
-    Map<String, String> headers,
-  ) {
-    for (final MapEntry<String, String> entry in headers.entries) {
-      request.headers.set(entry.key, entry.value);
-    }
-  }
-
-  ///
-  ///
-  ///
-  Future<AgattpResponse> _processResponse(HttpClientResponse response) async {
-    final String responseBody =
-        await response.transform(encoding.decoder).join();
-
-    return AgattpResponse(response, responseBody);
-  }
-
-  ///
-  ///
-  ///
-  Future<AgattpResponse> _send(
-    HttpClient client,
-    HttpClientRequest request,
-    Map<String, String> headers,
-    String? body,
-  ) async {
-    _prepareHeaders(request, headers);
-
-    if (body != null) {
-      request.write(body);
-    }
-
-    final HttpClientResponse response = await request.close();
-
-    final AgattpResponse agattpResponse = await _processResponse(response);
-
-    client.close(force: forceClose);
-
-    return agattpResponse;
+  Map<String, String> _jsonHeaders({
+    required String? bearerToken,
+    required Map<String, String> extraHeaders,
+    required bool hasBody,
+  }) {
+    return <String, String>{
+      HttpHeaders.acceptEncodingHeader: 'application/json',
+      if (hasBody)
+        HttpHeaders.contentTypeHeader:
+            'application/json; charset=${encoding.name}',
+      if (bearerToken != null && bearerToken.isNotEmpty)
+        HttpHeaders.authorizationHeader: 'Bearer $bearerToken',
+      ...extraHeaders,
+    };
   }
 
   ///
@@ -87,11 +55,73 @@ class Agattp {
   Future<AgattpResponse> get(
     Uri uri, {
     Map<String, String> headers = const <String, String>{},
-  }) async {
-    final HttpClient client = _prepareClient();
-    final HttpClientRequest request = await client.getUrl(uri);
-    return _send(client, request, headers, null);
-  }
+    int? timeout,
+  }) =>
+      AgattpCall(this).send(
+        method: AgattpMethod.get,
+        uri: uri,
+        headers: headers,
+        body: null,
+        timeout: timeout,
+      );
+
+  ///
+  ///
+  ///
+  Future<AgattpResponseJson<T>> getJson<T>(
+    Uri uri, {
+    String? bearerToken,
+    Map<String, String> extraHeaders = const <String, String>{},
+    int? timeout,
+  }) async =>
+      AgattpResponseJson<T>(
+        await get(
+          uri,
+          headers: _jsonHeaders(
+            bearerToken: bearerToken,
+            extraHeaders: extraHeaders,
+            hasBody: false,
+          ),
+          timeout: timeout,
+        ),
+      );
+
+  ///
+  ///
+  ///
+  Future<AgattpResponse> head(
+    Uri uri, {
+    Map<String, String> headers = const <String, String>{},
+    int? timeout,
+  }) async =>
+      AgattpCall(this).send(
+        method: AgattpMethod.head,
+        uri: uri,
+        headers: headers,
+        body: null,
+        timeout: timeout,
+      );
+
+  ///
+  ///
+  ///
+  Future<AgattpResponseJson<T>> headJson<T>(
+    Uri uri, {
+    String? bearerToken,
+    Map<String, String> extraHeaders = const <String, String>{},
+    int? timeout,
+  }) async =>
+      AgattpResponseJson<T>(
+        await head(
+          uri,
+          headers: _jsonHeaders(
+            bearerToken: bearerToken,
+            extraHeaders: extraHeaders,
+            hasBody: false,
+          ),
+          timeout: timeout,
+        ),
+      );
 
   ///
   ///
@@ -100,9 +130,161 @@ class Agattp {
     Uri uri, {
     Map<String, String> headers = const <String, String>{},
     String? body,
+    int? timeout,
+  }) async =>
+      AgattpCall(this).send(
+        method: AgattpMethod.post,
+        uri: uri,
+        headers: headers,
+        body: body,
+        timeout: timeout,
+      );
+
+  ///
+  ///
+  ///
+  Future<AgattpResponseJson<T>> postJson<T>(
+    Uri uri, {
+    dynamic body,
+    String? bearerToken,
+    Map<String, String> extraHeaders = const <String, String>{},
+    int? timeout,
   }) async {
-    final HttpClient client = _prepareClient();
-    final HttpClientRequest request = await client.postUrl(uri);
-    return _send(client, request, headers, body);
+    return AgattpResponseJson<T>(
+      await post(
+        uri,
+        headers: _jsonHeaders(
+          bearerToken: bearerToken,
+          extraHeaders: extraHeaders,
+          hasBody: body != null,
+        ),
+        body: jsonEncode(body),
+        timeout: timeout,
+      ),
+    );
+  }
+
+  ///
+  ///
+  ///
+  Future<AgattpResponse> put(
+    Uri uri, {
+    Map<String, String> headers = const <String, String>{},
+    String? body,
+    int? timeout,
+  }) async =>
+      AgattpCall(this).send(
+        method: AgattpMethod.put,
+        uri: uri,
+        headers: headers,
+        body: body,
+        timeout: timeout,
+      );
+
+  ///
+  ///
+  ///
+  Future<AgattpResponseJson<T>> putJson<T>(
+    Uri uri, {
+    dynamic body,
+    String? bearerToken,
+    Map<String, String> extraHeaders = const <String, String>{},
+    int? timeout,
+  }) async {
+    return AgattpResponseJson<T>(
+      await put(
+        uri,
+        headers: _jsonHeaders(
+          bearerToken: bearerToken,
+          extraHeaders: extraHeaders,
+          hasBody: body != null,
+        ),
+        body: jsonEncode(body),
+        timeout: timeout,
+      ),
+    );
+  }
+
+  ///
+  ///
+  ///
+  Future<AgattpResponse> patch(
+    Uri uri, {
+    Map<String, String> headers = const <String, String>{},
+    String? body,
+    int? timeout,
+  }) async =>
+      AgattpCall(this).send(
+        method: AgattpMethod.patch,
+        uri: uri,
+        headers: headers,
+        body: body,
+        timeout: timeout,
+      );
+
+  ///
+  ///
+  ///
+  Future<AgattpResponseJson<T>> patchJson<T>(
+    Uri uri, {
+    dynamic body,
+    String? bearerToken,
+    Map<String, String> extraHeaders = const <String, String>{},
+    int? timeout,
+  }) async {
+    return AgattpResponseJson<T>(
+      await patch(
+        uri,
+        headers: _jsonHeaders(
+          bearerToken: bearerToken,
+          extraHeaders: extraHeaders,
+          hasBody: body != null,
+        ),
+        body: jsonEncode(body),
+        timeout: timeout,
+      ),
+    );
+  }
+
+  ///
+  ///
+  ///
+  Future<AgattpResponse> delete(
+    Uri uri, {
+    Map<String, String> headers = const <String, String>{},
+    String? body,
+    int? timeout,
+  }) async {
+    return AgattpCall(this).send(
+      method: AgattpMethod.delete,
+      uri: uri,
+      headers: headers,
+      body: body,
+      timeout: timeout,
+    );
+  }
+
+  ///
+  ///
+  ///
+  Future<AgattpResponseJson<T>> deleteJson<T>(
+    Uri uri, {
+    dynamic body,
+    String? bearerToken,
+    Map<String, String> extraHeaders = const <String, String>{},
+    int? timeout,
+  }) async {
+    return AgattpResponseJson<T>(
+      await delete(
+        uri,
+        headers: _jsonHeaders(
+          bearerToken: bearerToken,
+          extraHeaders: extraHeaders,
+          hasBody: body != null,
+        ),
+        body: jsonEncode(body),
+        timeout: timeout,
+      ),
+    );
   }
 }

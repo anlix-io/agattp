@@ -3,42 +3,39 @@ import 'dart:io';
 ///
 ///
 ///
-class AgattpResponse {
-  final HttpClientResponse response;
-  final String body;
+abstract class AgattpResponse {
+  ///
+  ///
+  ///
+  String get body;
 
   ///
   ///
   ///
-  AgattpResponse(this.response, this.body);
+  int get statusCode;
 
   ///
   ///
   ///
-  int get statusCode => response.statusCode;
+  String get reasonPhrase;
 
   ///
   ///
   ///
-  String get reasonPhrase => response.reasonPhrase;
+  bool get isRedirect;
 
   ///
   ///
   ///
-  bool get isRedirect => response.isRedirect;
+  bool get isPersistentConnection;
 
   ///
   ///
   ///
-  bool get isPersistentConnection => response.persistentConnection;
+  HttpHeaders get headers;
 
   ///
   ///
   ///
-  HttpHeaders get headers => response.headers;
-
-  ///
-  ///
-  ///
-  List<Cookie> get cookies => response.cookies;
+  List<Cookie> get cookies;
 }

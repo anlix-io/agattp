@@ -12,7 +12,7 @@ class AgattpCall extends AgattpAbstractCall {
   ///
   ///
   ///
-  AgattpCall(super.parent);
+  AgattpCall(super.config);
 
   ///
   ///
@@ -33,9 +33,7 @@ class AgattpCall extends AgattpAbstractCall {
         response = await get(
           uri,
           headers: headers,
-        ).timeout(
-          timeout == null ? parent.timeout : Duration(milliseconds: timeout),
-        );
+        ).timeout(Duration(milliseconds: timeout ?? config.timeout));
         break;
 
       /// POST
@@ -44,10 +42,8 @@ class AgattpCall extends AgattpAbstractCall {
           uri,
           headers: headers,
           body: body,
-          encoding: parent.encoding,
-        ).timeout(
-          timeout == null ? parent.timeout : Duration(milliseconds: timeout),
-        );
+          encoding: config.encoding,
+        ).timeout(Duration(milliseconds: timeout ?? config.timeout));
         break;
 
       /// PUT
@@ -56,10 +52,8 @@ class AgattpCall extends AgattpAbstractCall {
           uri,
           headers: headers,
           body: body,
-          encoding: parent.encoding,
-        ).timeout(
-          timeout == null ? parent.timeout : Duration(milliseconds: timeout),
-        );
+          encoding: config.encoding,
+        ).timeout(Duration(milliseconds: timeout ?? config.timeout));
         break;
 
       /// DELETE
@@ -68,10 +62,8 @@ class AgattpCall extends AgattpAbstractCall {
           uri,
           headers: headers,
           body: body,
-          encoding: parent.encoding,
-        ).timeout(
-          timeout == null ? parent.timeout : Duration(milliseconds: timeout),
-        );
+          encoding: config.encoding,
+        ).timeout(Duration(milliseconds: timeout ?? config.timeout));
         break;
 
       /// HEAD
@@ -79,9 +71,7 @@ class AgattpCall extends AgattpAbstractCall {
         response = await head(
           uri,
           headers: headers,
-        ).timeout(
-          timeout == null ? parent.timeout : Duration(milliseconds: timeout),
-        );
+        ).timeout(Duration(milliseconds: timeout ?? config.timeout));
         break;
 
       /// PATCH
@@ -90,10 +80,8 @@ class AgattpCall extends AgattpAbstractCall {
           uri,
           headers: headers,
           body: body,
-          encoding: parent.encoding,
-        ).timeout(
-          timeout == null ? parent.timeout : Duration(milliseconds: timeout),
-        );
+          encoding: config.encoding,
+        ).timeout(Duration(milliseconds: timeout ?? config.timeout));
         break;
     }
 

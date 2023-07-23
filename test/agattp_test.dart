@@ -322,8 +322,9 @@ void main() {
     });
 
     test('Redirect', () async {
-      final AgattpResponse response = await Agattp(followRedirects: false)
-          .get(Uri.parse('https://httpbingo.org/redirect/1'));
+      final AgattpResponse response =
+          await Agattp(config: const AgattpConfig(followRedirects: false))
+              .get(Uri.parse('https://httpbingo.org/redirect/1'));
 
       expect(response.statusCode, 302);
       expect(response.reasonPhrase, 'Found');
@@ -360,11 +361,12 @@ void main() {
 
     test('Timeout', () async {
       try {
-        await Agattp(timeout: 2000).get(
+        await Agattp().get(
           Uri.parse('https://httpbingo.org/delay/5'),
           headers: <String, String>{
             HttpHeaders.contentTypeHeader: 'text/plain',
           },
+          timeout: 2000,
         );
         fail('Should have thrown TimeoutException');
       } on Exception catch (e) {

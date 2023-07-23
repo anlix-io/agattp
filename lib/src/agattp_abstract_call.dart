@@ -1,4 +1,4 @@
-import 'package:agattp/src/agattp.dart';
+import 'package:agattp/src/agattp_config.dart';
 import 'package:agattp/src/agattp_method.dart';
 import 'package:agattp/src/agattp_response.dart';
 
@@ -6,12 +6,12 @@ import 'package:agattp/src/agattp_response.dart';
 ///
 ///
 abstract class AgattpAbstractCall {
-  final Agattp parent;
+  final AgattpConfig config;
 
   ///
   ///
   ///
-  AgattpAbstractCall(this.parent);
+  AgattpAbstractCall(this.config);
 
   ///
   ///

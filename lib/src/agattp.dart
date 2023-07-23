@@ -23,8 +23,19 @@ class Agattp {
   ///
   ///
   ///
+  Map<String, String> _headers({
+    required Map<String, String> extraHeaders,
+  }) {
+    return <String, String>{
+      if (config.auth != null) ...config.auth!.authHeaders,
+      ...extraHeaders,
+    };
+  }
+
+  ///
+  ///
+  ///
   Map<String, String> _jsonHeaders({
-    required String? bearerToken,
     required Map<String, String> extraHeaders,
     required bool hasBody,
   }) {
@@ -33,9 +44,7 @@ class Agattp {
       if (hasBody)
         HttpHeaders.contentTypeHeader:
             'application/json; charset=${config.encoding.name}',
-      if (bearerToken != null && bearerToken.isNotEmpty)
-        HttpHeaders.authorizationHeader: 'Bearer $bearerToken',
-      ...extraHeaders,
+      ..._headers(extraHeaders: extraHeaders),
     };
   }
 
@@ -60,7 +69,6 @@ class Agattp {
   ///
   Future<AgattpResponseJson<T>> getJson<T>(
     Uri uri, {
-    String? bearerToken,
     Map<String, String> extraHeaders = const <String, String>{},
     int? timeout,
   }) async =>
@@ -68,7 +76,6 @@ class Agattp {
         await get(
           uri,
           headers: _jsonHeaders(
-            bearerToken: bearerToken,
             extraHeaders: extraHeaders,
             hasBody: false,
           ),
@@ -97,7 +104,6 @@ class Agattp {
   ///
   Future<AgattpResponseJson<T>> headJson<T>(
     Uri uri, {
-    String? bearerToken,
     Map<String, String> extraHeaders = const <String, String>{},
     int? timeout,
   }) async =>
@@ -105,7 +111,6 @@ class Agattp {
         await head(
           uri,
           headers: _jsonHeaders(
-            bearerToken: bearerToken,
             extraHeaders: extraHeaders,
             hasBody: false,
           ),
@@ -136,7 +141,6 @@ class Agattp {
   Future<AgattpResponseJson<T>> postJson<T>(
     Uri uri, {
     dynamic body,
-    String? bearerToken,
     Map<String, String> extraHeaders = const <String, String>{},
     int? timeout,
   }) async {
@@ -144,7 +148,6 @@ class Agattp {
       await post(
         uri,
         headers: _jsonHeaders(
-          bearerToken: bearerToken,
           extraHeaders: extraHeaders,
           hasBody: body != null,
         ),
@@ -177,7 +180,6 @@ class Agattp {
   Future<AgattpResponseJson<T>> putJson<T>(
     Uri uri, {
     dynamic body,
-    String? bearerToken,
     Map<String, String> extraHeaders = const <String, String>{},
     int? timeout,
   }) async {
@@ -185,7 +187,6 @@ class Agattp {
       await put(
         uri,
         headers: _jsonHeaders(
-          bearerToken: bearerToken,
           extraHeaders: extraHeaders,
           hasBody: body != null,
         ),
@@ -218,7 +219,6 @@ class Agattp {
   Future<AgattpResponseJson<T>> patchJson<T>(
     Uri uri, {
     dynamic body,
-    String? bearerToken,
     Map<String, String> extraHeaders = const <String, String>{},
     int? timeout,
   }) async {
@@ -226,7 +226,6 @@ class Agattp {
       await patch(
         uri,
         headers: _jsonHeaders(
-          bearerToken: bearerToken,
           extraHeaders: extraHeaders,
           hasBody: body != null,
         ),
@@ -260,7 +259,6 @@ class Agattp {
   Future<AgattpResponseJson<T>> deleteJson<T>(
     Uri uri, {
     dynamic body,
-    String? bearerToken,
     Map<String, String> extraHeaders = const <String, String>{},
     int? timeout,
   }) async {
@@ -268,7 +266,6 @@ class Agattp {
       await delete(
         uri,
         headers: _jsonHeaders(
-          bearerToken: bearerToken,
           extraHeaders: extraHeaders,
           hasBody: body != null,
         ),

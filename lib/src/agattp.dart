@@ -59,7 +59,7 @@ class Agattp {
       AgattpCall(config).send(
         method: AgattpMethod.get,
         uri: uri,
-        headers: headers,
+        headers: _headers(extraHeaders: headers),
         body: null,
         timeout: timeout,
       );
@@ -94,7 +94,7 @@ class Agattp {
       AgattpCall(config).send(
         method: AgattpMethod.head,
         uri: uri,
-        headers: headers,
+        headers: _headers(extraHeaders: headers),
         body: null,
         timeout: timeout,
       );
@@ -130,7 +130,7 @@ class Agattp {
       AgattpCall(config).send(
         method: AgattpMethod.post,
         uri: uri,
-        headers: headers,
+        headers: _headers(extraHeaders: headers),
         body: body,
         timeout: timeout,
       );
@@ -169,7 +169,7 @@ class Agattp {
       AgattpCall(config).send(
         method: AgattpMethod.put,
         uri: uri,
-        headers: headers,
+        headers: _headers(extraHeaders: headers),
         body: body,
         timeout: timeout,
       );
@@ -208,7 +208,7 @@ class Agattp {
       AgattpCall(config).send(
         method: AgattpMethod.patch,
         uri: uri,
-        headers: headers,
+        headers: _headers(extraHeaders: headers),
         body: body,
         timeout: timeout,
       );
@@ -247,7 +247,7 @@ class Agattp {
     return AgattpCall(config).send(
       method: AgattpMethod.delete,
       uri: uri,
-      headers: headers,
+      headers: _headers(extraHeaders: headers),
       body: body,
       timeout: timeout,
     );

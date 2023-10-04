@@ -40,7 +40,7 @@ class Agattp {
     required bool hasBody,
   }) {
     return <String, String>{
-      HttpHeaders.acceptEncodingHeader: 'application/json',
+      // HttpHeaders.acceptEncodingHeader: 'application/json',
       if (hasBody)
         HttpHeaders.contentTypeHeader:
             'application/json; charset=${config.encoding.name}',

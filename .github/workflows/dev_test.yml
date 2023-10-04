@@ -29,6 +29,8 @@ jobs:
           echo $URL
           LATEST=$(curl --silent "$URL" | jq -r .name)
           echo $LATEST
+          echo $VERSION
+          echo "v$VERSION"
           if [[ "$LATEST" == "v$VERSION" ]]; then
             echo "Version already used: $VERSION"
           fi

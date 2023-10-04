@@ -22,9 +22,6 @@ jobs:
         run: |
           export VERSION=$(grep 'version:' pubspec.yaml | cut -c 10- | cut -f 1 -d '+')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-
-      - name: Check if version is used
-        run: |
           URL=$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases/latest
           echo $URL
           LATEST=$(curl --silent "$URL" | jq -r .name)
@@ -33,4 +30,5 @@ jobs:
           echo "v$VERSION"
           if [[ "$LATEST" == "v$VERSION" ]]; then
             echo "Version already used: $VERSION"
+            exit 1
           fi

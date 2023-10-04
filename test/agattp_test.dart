@@ -16,6 +16,10 @@ void main() {
 
       expect(response.statusCode, 200);
       expect(response.reasonPhrase, 'OK');
+      expect(response.isRedirect, false);
+      expect(response.isPersistentConnection, true);
+      expect(response.headers, isA<HttpHeaders>());
+      expect(response.cookies, isEmpty);
       expect(response.body, isEmpty);
     });
 
@@ -317,13 +321,90 @@ void main() {
       expect(response.body, isEmpty);
     });
 
+    test('Redirect', () async {
+      final AgattpResponse response =
+          await Agattp(config: const AgattpConfig(followRedirects: false))
+              .get(Uri.parse('https://httpbingo.org/redirect/1'));
+
+      expect(response.statusCode, 302);
+      expect(response.reasonPhrase, 'Found');
+      expect(response.isRedirect, true);
+      expect(response.body, isEmpty);
+    });
+
+    test('Bearer Token', () async {
+      final String token =
+          DateTime.now().microsecondsSinceEpoch.toRadixString(16).toLowerCase();
+
+      final AgattpResponseJson<Map<String, dynamic>> response =
+          await Agattp(config: AgattpConfig(auth: AgattpAuthBearer(token)))
+              .getJson(Uri.parse('https://httpbingo.org/bearer'));
+
+      expect(response.statusCode, 200);
+      expect(response.reasonPhrase, 'OK');
+      expect(response.isRedirect, false);
+      expect(response.json['authenticated'], true);
+      expect(response.json['token'], token);
+    });
+
+    test('No Bearer Token', () async {
+      final AgattpResponseJson<Map<String, dynamic>> response =
+          await Agattp().getJson(Uri.parse('https://httpbingo.org/bearer'));
+
+      expect(response.statusCode, 401);
+      expect(response.reasonPhrase, 'Unauthorized');
+      expect(response.isRedirect, false);
+      expect(response.json, isNotEmpty);
+    });
+
+    test('Basic Auth', () async {
+      const String user = 'user';
+      const String pass = 'pass';
+
+      final AgattpResponseJson<Map<String, dynamic>> response = await Agattp(
+        config: const AgattpConfig(
+          auth: AgattpAuthBasic(
+            username: user,
+            password: pass,
+          ),
+        ),
+      ).getJson(Uri.parse('https://httpbingo.org/basic-auth/$user/$pass'));
+
+      expect(response.statusCode, 200);
+      expect(response.reasonPhrase, 'OK');
+      expect(response.isRedirect, false);
+      expect(response.json['authorized'], true);
+      expect(response.json['user'], user);
+    });
+
+    test('Basic Auth Fail', () async {
+      const String user = 'user';
+      const String pass = 'pass';
+
+      final AgattpResponseJson<Map<String, dynamic>> response = await Agattp(
+        config: const AgattpConfig(
+          auth: AgattpAuthBasic(
+            username: user,
+            password: pass,
+          ),
+        ),
+      ).getJson(Uri.parse('https://httpbingo.org/basic-auth/$user/a1$pass'));
+
+      expect(response.statusCode, 401);
+      expect(response.reasonPhrase, 'Unauthorized');
+      expect(response.isRedirect, false);
+      expect(response.json['authorized'], false);
+      expect(response.json['user'], user);
+    });
+
     test('Timeout', () async {
       try {
-        await Agattp(timeout: 2000).get(
+        await Agattp().get(
           Uri.parse('https://httpbingo.org/delay/5'),
           headers: <String, String>{
             HttpHeaders.contentTypeHeader: 'text/plain',
           },
+          timeout: 2000,
         );
         fail('Should have thrown TimeoutException');
       } on Exception catch (e) {

@@ -13,39 +13,38 @@ import 'package:agattp/src/agattp_method.dart';
 ///
 ///
 class Agattp {
-  final BadCertificateCallback badCertificateCallback;
-  final Duration timeout;
-  final Encoding encoding;
-  final bool forceClose;
+  final AgattpConfig config;
 
   ///
   ///
   ///
-  Agattp({
-    BadCertificateCallback? badCertificateCallback,
-    int? timeout,
-    this.encoding = utf8,
-    this.forceClose = false,
-  })  : badCertificateCallback =
-            badCertificateCallback ?? ((_, __, ___) => false),
-        timeout = Duration(milliseconds: timeout ?? 60000);
+  Agattp({this.config = const AgattpConfig()});
+
+  ///
+  ///
+  ///
+  Map<String, String> _headers({
+    required Map<String, String> extraHeaders,
+  }) {
+    return <String, String>{
+      if (config.auth != null) ...config.auth!.authHeaders,
+      ...extraHeaders,
+    };
+  }
 
   ///
   ///
   ///
   Map<String, String> _jsonHeaders({
-    required String? bearerToken,
     required Map<String, String> extraHeaders,
     required bool hasBody,
   }) {
     return <String, String>{
-      HttpHeaders.acceptEncodingHeader: 'application/json',
+      // HttpHeaders.acceptEncodingHeader: 'application/json',
       if (hasBody)
         HttpHeaders.contentTypeHeader:
-            'application/json; charset=${encoding.name}',
-      if (bearerToken != null && bearerToken.isNotEmpty)
-        HttpHeaders.authorizationHeader: 'Bearer $bearerToken',
-      ...extraHeaders,
+            'application/json; charset=${config.encoding.name}',
+      ..._headers(extraHeaders: extraHeaders),
     };
   }
 
@@ -57,10 +56,10 @@ class Agattp {
     Map<String, String> headers = const <String, String>{},
     int? timeout,
   }) =>
-      AgattpCall(this).send(
+      AgattpCall(config).send(
         method: AgattpMethod.get,
         uri: uri,
-        headers: headers,
+        headers: _headers(extraHeaders: headers),
         body: null,
         timeout: timeout,
       );
@@ -70,7 +69,6 @@ class Agattp {
   ///
   Future<AgattpResponseJson<T>> getJson<T>(
     Uri uri, {
-    String? bearerToken,
     Map<String, String> extraHeaders = const <String, String>{},
     int? timeout,
   }) async =>
@@ -78,7 +76,6 @@ class Agattp {
         await get(
           uri,
           headers: _jsonHeaders(
-            bearerToken: bearerToken,
             extraHeaders: extraHeaders,
             hasBody: false,
           ),
@@ -94,10 +91,10 @@ class Agattp {
     Map<String, String> headers = const <String, String>{},
     int? timeout,
   }) async =>
-      AgattpCall(this).send(
+      AgattpCall(config).send(
         method: AgattpMethod.head,
         uri: uri,
-        headers: headers,
+        headers: _headers(extraHeaders: headers),
         body: null,
         timeout: timeout,
       );
@@ -107,7 +104,6 @@ class Agattp {
   ///
   Future<AgattpResponseJson<T>> headJson<T>(
     Uri uri, {
-    String? bearerToken,
     Map<String, String> extraHeaders = const <String, String>{},
     int? timeout,
   }) async =>
@@ -115,7 +111,6 @@ class Agattp {
         await head(
           uri,
           headers: _jsonHeaders(
-            bearerToken: bearerToken,
             extraHeaders: extraHeaders,
             hasBody: false,
           ),
@@ -132,10 +127,10 @@ class Agattp {
     String? body,
     int? timeout,
   }) async =>
-      AgattpCall(this).send(
+      AgattpCall(config).send(
         method: AgattpMethod.post,
         uri: uri,
-        headers: headers,
+        headers: _headers(extraHeaders: headers),
         body: body,
         timeout: timeout,
       );
@@ -146,7 +141,6 @@ class Agattp {
   Future<AgattpResponseJson<T>> postJson<T>(
     Uri uri, {
     dynamic body,
-    String? bearerToken,
     Map<String, String> extraHeaders = const <String, String>{},
     int? timeout,
   }) async {
@@ -154,7 +148,6 @@ class Agattp {
       await post(
         uri,
         headers: _jsonHeaders(
-          bearerToken: bearerToken,
           extraHeaders: extraHeaders,
           hasBody: body != null,
         ),
@@ -173,10 +166,10 @@ class Agattp {
     String? body,
     int? timeout,
   }) async =>
-      AgattpCall(this).send(
+      AgattpCall(config).send(
         method: AgattpMethod.put,
         uri: uri,
-        headers: headers,
+        headers: _headers(extraHeaders: headers),
         body: body,
         timeout: timeout,
       );
@@ -187,7 +180,6 @@ class Agattp {
   Future<AgattpResponseJson<T>> putJson<T>(
     Uri uri, {
     dynamic body,
-    String? bearerToken,
     Map<String, String> extraHeaders = const <String, String>{},
     int? timeout,
   }) async {
@@ -195,7 +187,6 @@ class Agattp {
       await put(
         uri,
         headers: _jsonHeaders(
-          bearerToken: bearerToken,
           extraHeaders: extraHeaders,
           hasBody: body != null,
         ),
@@ -214,10 +205,10 @@ class Agattp {
     String? body,
     int? timeout,
   }) async =>
-      AgattpCall(this).send(
+      AgattpCall(config).send(
         method: AgattpMethod.patch,
         uri: uri,
-        headers: headers,
+        headers: _headers(extraHeaders: headers),
         body: body,
         timeout: timeout,
       );
@@ -228,7 +219,6 @@ class Agattp {
   Future<AgattpResponseJson<T>> patchJson<T>(
     Uri uri, {
     dynamic body,
-    String? bearerToken,
     Map<String, String> extraHeaders = const <String, String>{},
     int? timeout,
   }) async {
@@ -236,7 +226,6 @@ class Agattp {
       await patch(
         uri,
         headers: _jsonHeaders(
-          bearerToken: bearerToken,
           extraHeaders: extraHeaders,
           hasBody: body != null,
         ),
@@ -255,10 +244,10 @@ class Agattp {
     String? body,
     int? timeout,
   }) async {
-    return AgattpCall(this).send(
+    return AgattpCall(config).send(
       method: AgattpMethod.delete,
       uri: uri,
-      headers: headers,
+      headers: _headers(extraHeaders: headers),
       body: body,
       timeout: timeout,
     );
@@ -270,7 +259,6 @@ class Agattp {
   Future<AgattpResponseJson<T>> deleteJson<T>(
     Uri uri, {
     dynamic body,
-    String? bearerToken,
     Map<String, String> extraHeaders = const <String, String>{},
     int? timeout,
   }) async {
@@ -278,7 +266,6 @@ class Agattp {
       await delete(
         uri,
         headers: _jsonHeaders(
-          bearerToken: bearerToken,
           extraHeaders: extraHeaders,
           hasBody: body != null,
         ),

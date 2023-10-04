@@ -9,7 +9,7 @@ class AgattpCall extends AgattpAbstractCall {
   ///
   ///
   ///
-  AgattpCall(super.parent);
+  AgattpCall(super.config);
 
   ///
   ///

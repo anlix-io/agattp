@@ -12,7 +12,7 @@ class AgattpCall extends AgattpAbstractCall {
   ///
   ///
   ///
-  AgattpCall(super.parent);
+  AgattpCall(super.config);
 
   ///
   ///
@@ -26,7 +26,7 @@ class AgattpCall extends AgattpAbstractCall {
     required int? timeout,
   }) async {
     final HttpClient client = HttpClient()
-      ..badCertificateCallback = parent.badCertificateCallback;
+      ..badCertificateCallback = config.badCertificateCallback;
 
     late final HttpClientRequest request;
 
@@ -62,6 +62,8 @@ class AgattpCall extends AgattpAbstractCall {
         break;
     }
 
+    request.followRedirects = config.followRedirects;
+
     for (final MapEntry<String, String> entry in headers.entries) {
       request.headers.set(entry.key, entry.value);
     }
@@ -70,17 +72,17 @@ class AgattpCall extends AgattpAbstractCall {
       request.write(body);
     }
 
-    final HttpClientResponse response = await request.close().timeout(
-          timeout == null ? parent.timeout : Duration(milliseconds: timeout),
-        );
+    final HttpClientResponse response = await request
+        .close()
+        .timeout(Duration(milliseconds: timeout ?? config.timeout));
 
     final String responseBody =
-        await response.transform(parent.encoding.decoder).join();
+        await response.transform(config.encoding.decoder).join();
 
     final AgattpResponse agattpResponse =
         AgattpResponseNative(response, responseBody);
 
-    client.close(force: parent.forceClose);
+    client.close(force: config.forceClose);
 
     return agattpResponse;
   }

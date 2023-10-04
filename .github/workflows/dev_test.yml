@@ -26,7 +26,9 @@ jobs:
       - name: Check if version is used
         run: |
           URL=$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases/latest
+          echo $URL
           LATEST=$(curl --silent "$URL" | jq -r .name)
+          echo $LATEST
           if [ "$LATEST" == "v$VERSION" ]; then
             echo "Version already used: $VERSION"
           fi

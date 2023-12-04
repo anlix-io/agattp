@@ -32,7 +32,7 @@ void main() {
       expect(response.body, isEmpty);
     });
 
-    test('GET Json', () async {
+    test('GET Json With Content', () async {
       const String url = 'https://httpbingo.org/get?test=ok';
 
       final AgattpResponseJson<Map<String, dynamic>> response =
@@ -40,6 +40,8 @@ void main() {
 
       expect(response.statusCode, 200);
       expect(response.reasonPhrase, 'OK');
+      expect(response.isRedirect, false);
+      expect(response.isPersistentConnection, true);
       expect(response.json['url'], url);
     });
 
@@ -387,6 +389,28 @@ void main() {
       expect(response.isRedirect, false);
       expect(response.json['authorized'], false);
       expect(response.json['user'], user);
+    });
+
+    test('Headers', () async {
+      const String key = 'X-Test';
+      const String value = 'ok';
+
+      final AgattpResponseJson<Map<String, dynamic>> response =
+          await Agattp().getJson(
+        Uri.parse('https://httpbingo.org/headers'),
+        extraHeaders: <String, String>{
+          key: value,
+        },
+      );
+
+      expect(response.statusCode, 200);
+      expect(response.reasonPhrase, 'OK');
+      expect(response.isRedirect, false);
+      expect(response.json['headers'] is Map<String, dynamic>, true);
+
+      final Map<String, dynamic> headers = response.json['headers'];
+
+      expect(headers[key], <String>[value]);
     });
 
     test('Timeout', () async {

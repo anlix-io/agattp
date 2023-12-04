@@ -23,6 +23,28 @@ class Agattp {
   ///
   ///
   ///
+  factory Agattp.authBearer(String? token) => Agattp(
+        config: AgattpConfig(
+          auth: AgattpAuthBearer(token),
+        ),
+      );
+
+  ///
+  ///
+  ///
+  factory Agattp.authBasic({
+    required String username,
+    required String password,
+  }) =>
+      Agattp(
+        config: AgattpConfig(
+          auth: AgattpAuthBasic(username: username, password: password),
+        ),
+      );
+
+  ///
+  ///
+  ///
   Map<String, String> _headers({
     required Map<String, String> extraHeaders,
   }) {

@@ -337,7 +337,7 @@ void main() {
           DateTime.now().microsecondsSinceEpoch.toRadixString(16).toLowerCase();
 
       final AgattpResponseJson<Map<String, dynamic>> response =
-          await Agattp(config: AgattpConfig(auth: AgattpAuthBearer(token)))
+          await Agattp.authBearer(token)
               .getJson(Uri.parse('https://httpbingo.org/bearer'));
 
       expect(response.statusCode, 200);
@@ -361,14 +361,10 @@ void main() {
       const String user = 'user';
       const String pass = 'pass';
 
-      final AgattpResponseJson<Map<String, dynamic>> response = await Agattp(
-        config: const AgattpConfig(
-          auth: AgattpAuthBasic(
-            username: user,
-            password: pass,
-          ),
-        ),
-      ).getJson(Uri.parse('https://httpbingo.org/basic-auth/$user/$pass'));
+      final AgattpResponseJson<Map<String, dynamic>> response =
+          await Agattp.authBasic(username: user, password: pass).getJson(
+        Uri.parse('https://httpbingo.org/basic-auth/$user/$pass'),
+      );
 
       expect(response.statusCode, 200);
       expect(response.reasonPhrase, 'OK');
@@ -381,14 +377,10 @@ void main() {
       const String user = 'user';
       const String pass = 'pass';
 
-      final AgattpResponseJson<Map<String, dynamic>> response = await Agattp(
-        config: const AgattpConfig(
-          auth: AgattpAuthBasic(
-            username: user,
-            password: pass,
-          ),
-        ),
-      ).getJson(Uri.parse('https://httpbingo.org/basic-auth/$user/a1$pass'));
+      final AgattpResponseJson<Map<String, dynamic>> response =
+          await Agattp.authBasic(username: user, password: pass).getJson(
+        Uri.parse('https://httpbingo.org/basic-auth/$user/a1$pass'),
+      );
 
       expect(response.statusCode, 401);
       expect(response.reasonPhrase, 'Unauthorized');

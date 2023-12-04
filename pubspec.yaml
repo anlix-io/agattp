@@ -13,7 +13,7 @@ dependencies:
 
 dev_dependencies:
   # https://pub.dev/packages/coverage
-  coverage: ^1.6.4
+  coverage: ^1.7.1
 
   # https://pub.dev/packages/lints
   lints: ^3.0.0

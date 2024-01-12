@@ -22,7 +22,7 @@ class AgattpAuthBasic extends AgattpAbstractAuth {
   ///
   ///
   @override
-  Map<String, String> get authHeaders => <String, String>{
+  Future<Map<String, String>> getAuthHeaders(_, __) async => <String, String>{
         HttpHeaders.authorizationHeader:
             'Basic ${base64.encode(utf8.encode('$username:$password'))}',
       };

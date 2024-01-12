@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:agattp/src/agattp_utils.dart';
 import 'package:agattp/src/auth/agattp_abstract_auth.dart';
 
 ///
@@ -13,6 +14,7 @@ class AgattpConfig {
   final Encoding encoding;
   final bool followRedirects;
   final bool forceClose;
+  final HeaderKeyCase headerKeyCase;
 
   ///
   ///
@@ -24,6 +26,7 @@ class AgattpConfig {
     this.encoding = utf8,
     this.followRedirects = true,
     this.forceClose = false,
+    this.headerKeyCase = HeaderKeyCase.capitalize,
   }) : _badCertificateCallback = badCertificateCallback;
 
   ///

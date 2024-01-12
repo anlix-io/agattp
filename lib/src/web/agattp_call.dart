@@ -1,6 +1,7 @@
 import 'package:agattp/src/agattp_abstract_call.dart';
 import 'package:agattp/src/agattp_method.dart';
 import 'package:agattp/src/agattp_response.dart';
+import 'package:agattp/src/agattp_utils.dart';
 import 'package:agattp/src/web/agattp_response_web.dart';
 
 import 'package:http/http.dart';
@@ -32,7 +33,7 @@ class AgattpCall extends AgattpAbstractCall {
       case AgattpMethod.get:
         response = await get(
           uri,
-          headers: headers,
+          headers: Utils.headers(headers, config.headerKeyCase),
         ).timeout(Duration(milliseconds: timeout ?? config.timeout));
         break;
 
@@ -40,7 +41,7 @@ class AgattpCall extends AgattpAbstractCall {
       case AgattpMethod.post:
         response = await post(
           uri,
-          headers: headers,
+          headers: Utils.headers(headers, config.headerKeyCase),
           body: body,
           encoding: config.encoding,
         ).timeout(Duration(milliseconds: timeout ?? config.timeout));
@@ -50,7 +51,7 @@ class AgattpCall extends AgattpAbstractCall {
       case AgattpMethod.put:
         response = await put(
           uri,
-          headers: headers,
+          headers: Utils.headers(headers, config.headerKeyCase),
           body: body,
           encoding: config.encoding,
         ).timeout(Duration(milliseconds: timeout ?? config.timeout));
@@ -60,7 +61,7 @@ class AgattpCall extends AgattpAbstractCall {
       case AgattpMethod.delete:
         response = await delete(
           uri,
-          headers: headers,
+          headers: Utils.headers(headers, config.headerKeyCase),
           body: body,
           encoding: config.encoding,
         ).timeout(Duration(milliseconds: timeout ?? config.timeout));
@@ -70,7 +71,7 @@ class AgattpCall extends AgattpAbstractCall {
       case AgattpMethod.head:
         response = await head(
           uri,
-          headers: headers,
+          headers: Utils.headers(headers, config.headerKeyCase),
         ).timeout(Duration(milliseconds: timeout ?? config.timeout));
         break;
 
@@ -78,13 +79,13 @@ class AgattpCall extends AgattpAbstractCall {
       case AgattpMethod.patch:
         response = await patch(
           uri,
-          headers: headers,
+          headers: Utils.headers(headers, config.headerKeyCase),
           body: body,
           encoding: config.encoding,
         ).timeout(Duration(milliseconds: timeout ?? config.timeout));
         break;
     }
 
-    return AgattpResponseWeb(response);
+    return AgattpResponseWeb(config.headerKeyCase, response);
   }
 }

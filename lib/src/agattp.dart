@@ -8,6 +8,7 @@ import 'package:agattp/src/agattp_call.dart'
     if (dart.library.js) 'package:agattp/src/web/agattp_call.dart';
 
 import 'package:agattp/src/agattp_method.dart';
+import 'package:agattp/src/auth/agattp_auth_digest.dart';
 
 ///
 ///
@@ -45,30 +46,46 @@ class Agattp {
   ///
   ///
   ///
-  Map<String, String> _headers({
-    required Map<String, String> extraHeaders,
-  }) {
-    return <String, String>{
-      if (config.auth != null) ...config.auth!.authHeaders,
-      ...extraHeaders,
-    };
-  }
+  factory Agattp.authDigest({
+    required String username,
+    required String password,
+  }) =>
+      Agattp(
+        config: AgattpConfig(
+          auth: AgattpAuthDigest(username: username, password: password),
+        ),
+      );
 
   ///
   ///
   ///
-  Map<String, String> _jsonHeaders({
+  Future<Map<String, String>> _headers({
+    required AgattpMethod method,
+    required Uri uri,
+    required Map<String, String> extraHeaders,
+  }) async =>
+      <String, String>{
+        if (config.auth != null)
+          ...await config.auth!.getAuthHeaders(method, uri),
+        ...extraHeaders,
+      };
+
+  ///
+  ///
+  ///
+  Future<Map<String, String>> _jsonHeaders({
+    required Uri uri,
+    required AgattpMethod method,
     required Map<String, String> extraHeaders,
     required bool hasBody,
-  }) {
-    return <String, String>{
-      // HttpHeaders.acceptEncodingHeader: 'application/json',
-      if (hasBody)
-        HttpHeaders.contentTypeHeader:
-            'application/json; charset=${config.encoding.name}',
-      ..._headers(extraHeaders: extraHeaders),
-    };
-  }
+  }) async =>
+      <String, String>{
+        // HttpHeaders.acceptEncodingHeader: 'application/json',
+        if (hasBody)
+          HttpHeaders.contentTypeHeader:
+              'application/json; charset=${config.encoding.name}',
+        ...await _headers(uri: uri, method: method, extraHeaders: extraHeaders),
+      };
 
   ///
   ///
@@ -77,11 +94,15 @@ class Agattp {
     Uri uri, {
     Map<String, String> headers = const <String, String>{},
     int? timeout,
-  }) =>
+  }) async =>
       AgattpCall(config).send(
         method: AgattpMethod.get,
         uri: uri,
-        headers: _headers(extraHeaders: headers),
+        headers: await _headers(
+          uri: uri,
+          method: AgattpMethod.get,
+          extraHeaders: headers,
+        ),
         body: null,
         timeout: timeout,
       );
@@ -95,12 +116,16 @@ class Agattp {
     int? timeout,
   }) async =>
       AgattpResponseJson<T>(
-        await get(
-          uri,
-          headers: _jsonHeaders(
+        await AgattpCall(config).send(
+          method: AgattpMethod.get,
+          uri: uri,
+          headers: await _jsonHeaders(
+            uri: uri,
+            method: AgattpMethod.get,
             extraHeaders: extraHeaders,
             hasBody: false,
           ),
+          body: null,
           timeout: timeout,
         ),
       );
@@ -116,7 +141,11 @@ class Agattp {
       AgattpCall(config).send(
         method: AgattpMethod.head,
         uri: uri,
-        headers: _headers(extraHeaders: headers),
+        headers: await _headers(
+          uri: uri,
+          method: AgattpMethod.head,
+          extraHeaders: headers,
+        ),
         body: null,
         timeout: timeout,
       );
@@ -130,12 +159,16 @@ class Agattp {
     int? timeout,
   }) async =>
       AgattpResponseJson<T>(
-        await head(
-          uri,
-          headers: _jsonHeaders(
+        await AgattpCall(config).send(
+          method: AgattpMethod.head,
+          uri: uri,
+          headers: await _jsonHeaders(
+            uri: uri,
+            method: AgattpMethod.head,
             extraHeaders: extraHeaders,
             hasBody: false,
           ),
+          body: null,
           timeout: timeout,
         ),
       );
@@ -152,7 +185,11 @@ class Agattp {
       AgattpCall(config).send(
         method: AgattpMethod.post,
         uri: uri,
-        headers: _headers(extraHeaders: headers),
+        headers: await _headers(
+          uri: uri,
+          method: AgattpMethod.post,
+          extraHeaders: headers,
+        ),
         body: body,
         timeout: timeout,
       );
@@ -165,19 +202,21 @@ class Agattp {
     dynamic body,
     Map<String, String> extraHeaders = const <String, String>{},
     int? timeout,
-  }) async {
-    return AgattpResponseJson<T>(
-      await post(
-        uri,
-        headers: _jsonHeaders(
-          extraHeaders: extraHeaders,
-          hasBody: body != null,
+  }) async =>
+      AgattpResponseJson<T>(
+        await AgattpCall(config).send(
+          method: AgattpMethod.post,
+          uri: uri,
+          headers: await _jsonHeaders(
+            uri: uri,
+            method: AgattpMethod.post,
+            extraHeaders: extraHeaders,
+            hasBody: body != null,
+          ),
+          body: jsonEncode(body),
+          timeout: timeout,
         ),
-        body: jsonEncode(body),
-        timeout: timeout,
-      ),
-    );
-  }
+      );
 
   ///
   ///
@@ -191,7 +230,11 @@ class Agattp {
       AgattpCall(config).send(
         method: AgattpMethod.put,
         uri: uri,
-        headers: _headers(extraHeaders: headers),
+        headers: await _headers(
+          uri: uri,
+          method: AgattpMethod.put,
+          extraHeaders: headers,
+        ),
         body: body,
         timeout: timeout,
       );
@@ -204,19 +247,21 @@ class Agattp {
     dynamic body,
     Map<String, String> extraHeaders = const <String, String>{},
     int? timeout,
-  }) async {
-    return AgattpResponseJson<T>(
-      await put(
-        uri,
-        headers: _jsonHeaders(
-          extraHeaders: extraHeaders,
-          hasBody: body != null,
+  }) async =>
+      AgattpResponseJson<T>(
+        await AgattpCall(config).send(
+          method: AgattpMethod.put,
+          uri: uri,
+          headers: await _jsonHeaders(
+            uri: uri,
+            method: AgattpMethod.put,
+            extraHeaders: extraHeaders,
+            hasBody: body != null,
+          ),
+          body: jsonEncode(body),
+          timeout: timeout,
         ),
-        body: jsonEncode(body),
-        timeout: timeout,
-      ),
-    );
-  }
+      );
 
   ///
   ///
@@ -230,7 +275,11 @@ class Agattp {
       AgattpCall(config).send(
         method: AgattpMethod.patch,
         uri: uri,
-        headers: _headers(extraHeaders: headers),
+        headers: await _headers(
+          uri: uri,
+          method: AgattpMethod.patch,
+          extraHeaders: headers,
+        ),
         body: body,
         timeout: timeout,
       );
@@ -243,19 +292,21 @@ class Agattp {
     dynamic body,
     Map<String, String> extraHeaders = const <String, String>{},
     int? timeout,
-  }) async {
-    return AgattpResponseJson<T>(
-      await patch(
-        uri,
-        headers: _jsonHeaders(
-          extraHeaders: extraHeaders,
-          hasBody: body != null,
+  }) async =>
+      AgattpResponseJson<T>(
+        await AgattpCall(config).send(
+          method: AgattpMethod.patch,
+          uri: uri,
+          headers: await _jsonHeaders(
+            uri: uri,
+            method: AgattpMethod.patch,
+            extraHeaders: extraHeaders,
+            hasBody: body != null,
+          ),
+          body: jsonEncode(body),
+          timeout: timeout,
         ),
-        body: jsonEncode(body),
-        timeout: timeout,
-      ),
-    );
-  }
+      );
 
   ///
   ///
@@ -265,15 +316,18 @@ class Agattp {
     Map<String, String> headers = const <String, String>{},
     String? body,
     int? timeout,
-  }) async {
-    return AgattpCall(config).send(
-      method: AgattpMethod.delete,
-      uri: uri,
-      headers: _headers(extraHeaders: headers),
-      body: body,
-      timeout: timeout,
-    );
-  }
+  }) async =>
+      AgattpCall(config).send(
+        method: AgattpMethod.delete,
+        uri: uri,
+        headers: await _headers(
+          uri: uri,
+          method: AgattpMethod.delete,
+          extraHeaders: headers,
+        ),
+        body: body,
+        timeout: timeout,
+      );
 
   ///
   ///
@@ -283,17 +337,19 @@ class Agattp {
     dynamic body,
     Map<String, String> extraHeaders = const <String, String>{},
     int? timeout,
-  }) async {
-    return AgattpResponseJson<T>(
-      await delete(
-        uri,
-        headers: _jsonHeaders(
-          extraHeaders: extraHeaders,
-          hasBody: body != null,
+  }) async =>
+      AgattpResponseJson<T>(
+        await AgattpCall(config).send(
+          method: AgattpMethod.delete,
+          uri: uri,
+          headers: await _jsonHeaders(
+            uri: uri,
+            method: AgattpMethod.delete,
+            extraHeaders: extraHeaders,
+            hasBody: body != null,
+          ),
+          body: jsonEncode(body),
+          timeout: timeout,
         ),
-        body: jsonEncode(body),
-        timeout: timeout,
-      ),
-    );
-  }
+      );
 }

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:agattp/agattp.dart';
+import 'package:agattp/src/auth/agattp_auth_digest.dart';
 import 'package:test/test.dart';
 
 ///
@@ -32,7 +33,7 @@ void main() {
       expect(response.body, isEmpty);
     });
 
-    test('GET Json', () async {
+    test('GET Json With Content', () async {
       const String url = 'https://httpbingo.org/get?test=ok';
 
       final AgattpResponseJson<Map<String, dynamic>> response =
@@ -40,6 +41,8 @@ void main() {
 
       expect(response.statusCode, 200);
       expect(response.reasonPhrase, 'OK');
+      expect(response.isRedirect, false);
+      expect(response.isPersistentConnection, true);
       expect(response.json['url'], url);
     });
 
@@ -357,7 +360,7 @@ void main() {
       expect(response.json, isNotEmpty);
     });
 
-    test('Basic Auth', () async {
+    test('Basic Auth Success', () async {
       const String user = 'user';
       const String pass = 'pass';
 
@@ -389,6 +392,28 @@ void main() {
       expect(response.json['user'], user);
     });
 
+    test('Headers', () async {
+      const String key = 'X-Test';
+      const String value = 'ok';
+
+      final AgattpResponseJson<Map<String, dynamic>> response =
+          await Agattp().getJson(
+        Uri.parse('https://httpbingo.org/headers'),
+        extraHeaders: <String, String>{
+          key: value,
+        },
+      );
+
+      expect(response.statusCode, 200);
+      expect(response.reasonPhrase, 'OK');
+      expect(response.isRedirect, false);
+      expect(response.json['headers'] is Map<String, dynamic>, true);
+
+      final Map<String, dynamic> headers = response.json['headers'];
+
+      expect(headers[key], <String>[value]);
+    });
+
     test('Timeout', () async {
       try {
         await Agattp().get(
@@ -402,6 +427,122 @@ void main() {
       } on Exception catch (e) {
         expect(e, isA<TimeoutException>());
       }
+    });
+
+    test('Digest MD5 Auth Get', () async {
+      const String username = 'user';
+      const String password = 'pass';
+      const String algorithm = 'MD5';
+
+      const String url = 'https://httpbingo.org'
+          '/digest-auth/auth/$username/$password/$algorithm';
+
+      final AgattpAuthDigest authDigest =
+          AgattpAuthDigest(username: username, password: password);
+
+      expect(authDigest.ready, false);
+
+      final Agattp agattpDigest = Agattp(
+        config: AgattpConfig(auth: authDigest),
+      );
+
+      final AgattpResponseJson<Map<String, dynamic>> response1 =
+          await agattpDigest.getJson(Uri.parse(url));
+
+      expect(response1.statusCode, 200);
+      expect(response1.reasonPhrase, 'OK');
+      expect(response1.isRedirect, false);
+      expect(response1.isPersistentConnection, true);
+      expect(response1.json['authorized'], true);
+      expect(response1.json['user'], username);
+
+      expect(authDigest.ready, true);
+
+      final AgattpResponseJson<Map<String, dynamic>> response2 =
+          await agattpDigest.getJson(Uri.parse(url));
+
+      expect(response2.statusCode, 200);
+      expect(response2.reasonPhrase, 'OK');
+      expect(response2.isRedirect, false);
+      expect(response2.isPersistentConnection, true);
+      expect(response2.json['authorized'], true);
+      expect(response2.json['user'], username);
+
+      authDigest.reset();
+
+      expect(authDigest.ready, false);
+
+      final AgattpResponseJson<Map<String, dynamic>> response3 =
+          await agattpDigest.getJson(Uri.parse(url));
+
+      expect(response3.statusCode, 200);
+      expect(response3.reasonPhrase, 'OK');
+      expect(response3.isRedirect, false);
+      expect(response3.isPersistentConnection, true);
+      expect(response3.json['authorized'], true);
+      expect(response3.json['user'], username);
+
+      expect(authDigest.ready, true);
+    });
+
+    test('Digest MD5 Auth Post', () async {
+      const String username = 'user';
+      const String password = 'pass';
+      const String algorithm = 'MD5';
+
+      const String url = 'https://httpbingo.org'
+          '/digest-auth/auth/$username/$password/$algorithm';
+
+      final AgattpResponseJson<Map<String, dynamic>> response =
+          await Agattp.authDigest(username: username, password: password)
+              .postJson(Uri.parse(url));
+
+      expect(response.statusCode, 200);
+      expect(response.reasonPhrase, 'OK');
+      expect(response.isRedirect, false);
+      expect(response.isPersistentConnection, true);
+      expect(response.json['authorized'], true);
+      expect(response.json['user'], username);
+    });
+
+    test('Digest MD5 Auth Put', () async {
+      const String username = 'user';
+      const String password = 'pass';
+      const String algorithm = 'MD5';
+
+      const String url = 'https://httpbingo.org'
+          '/digest-auth/auth/$username/$password/$algorithm';
+
+      final AgattpResponseJson<Map<String, dynamic>> response =
+          await Agattp.authDigest(username: username, password: password)
+              .putJson(Uri.parse(url));
+
+      expect(response.statusCode, 200);
+      expect(response.reasonPhrase, 'OK');
+      expect(response.isRedirect, false);
+      expect(response.isPersistentConnection, true);
+      expect(response.json['authorized'], true);
+      expect(response.json['user'], username);
+    });
+
+    test('Digest MD5 Auth Delete', () async {
+      const String username = 'user';
+      const String password = 'pass';
+      const String algorithm = 'MD5';
+
+      const String url = 'https://httpbingo.org'
+          '/digest-auth/auth/$username/$password/$algorithm';
+
+      final AgattpResponseJson<Map<String, dynamic>> response =
+          await Agattp.authDigest(username: username, password: password)
+              .deleteJson(Uri.parse(url));
+
+      expect(response.statusCode, 200);
+      expect(response.reasonPhrase, 'OK');
+      expect(response.isRedirect, false);
+      expect(response.isPersistentConnection, true);
+      expect(response.json['authorized'], true);
+      expect(response.json['user'], username);
     });
   });
 }

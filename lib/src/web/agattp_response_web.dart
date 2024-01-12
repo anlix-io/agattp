@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:agattp/agattp.dart';
 import 'package:agattp/src/agattp_response.dart';
+import 'package:agattp/src/agattp_utils.dart';
 import 'package:agattp/src/web/agattp_web_headers.dart';
 import 'package:http/http.dart';
 
@@ -14,9 +16,9 @@ class AgattpResponseWeb extends AgattpResponse {
   ///
   ///
   ///
-  AgattpResponseWeb(Response response)
+  AgattpResponseWeb( HeaderKeyCase keyCase, Response response)
       : _response = response,
-        _headers = AgattpWebHeaders.from(response.headers);
+        _headers = AgattpWebHeaders.from(keyCase, response.headers);
 
   ///
   ///

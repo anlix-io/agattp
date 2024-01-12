@@ -37,17 +37,6 @@
   final AgattpResponse response =
     await Agattp().get(Uri.parse('https://httpbingo.org/status/200'));
 
-  /// Auth Bearer
-  final AgattpResponseJson&lt;Map&lt;String, dynamic&gt;&gt; response =
-    await Agattp.authBearer(token)
-      .getJson(Uri.parse('https://httpbingo.org/bearer'));
-
-  /// Auth Basic
-  final AgattpResponseJson&lt;Map&lt;String, dynamic&gt;&gt; response =
-    await Agattp.authBasic(username: 'user', password: 'pass').getJson(
-      Uri.parse('https://httpbingo.org/basic-auth/user/pass'),
-    );
-
   /// POST
   final AgattpResponse response = await Agattp().post(
     Uri.parse('https://httpbingo.org/post'),
@@ -64,6 +53,23 @@
       body: &lt;String, dynamic&gt;{
         'message': 'Hello World!',
       },
+    );
+
+  /// Auth Bearer
+  final AgattpResponseJson&lt;Map&lt;String, dynamic&gt;&gt; response =
+    await Agattp.authBearer(token)
+      .getJson(Uri.parse('https://httpbingo.org/bearer'));
+
+  /// Auth Basic
+  final AgattpResponseJson&lt;Map&lt;String, dynamic&gt;&gt; response =
+    await Agattp.authBasic(username: 'user', password: 'pass').getJson(
+      Uri.parse('https://httpbingo.org/basic-auth/user/pass'),
+    );
+
+  /// Auth Digest (MD5 only)
+  final AgattpResponseJson&lt;Map&lt;String, dynamic&gt;&gt; response =
+    await Agattp.authDigest(username: 'user', password: 'pass').getJson(
+      Uri.parse('https://httpbingo.org/digest-auth/auth/user/pass/MD5'),
     );
 }
 </code></pre>

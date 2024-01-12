@@ -9,127 +9,134 @@ import 'package:testainers/testainers.dart';
 ///
 ///
 void main() {
-  group('', () {
-    const String server = 'localhost';
-    final TestainersHttpbucket container = TestainersHttpbucket();
+  group(
+    '',
+    () {
+      const String server = 'localhost';
+      final TestainersHttpbucket container = TestainersHttpbucket();
 
-    ///
-    setUpAll(() async {
-      await container.start();
-    });
+      ///
+      setUpAll(() async {
+        await container.start();
+      });
 
-    test('Capitalize Headers', () async {
-      final Map<String, String> extraHeaders = <String, String>{
-        HttpHeaders.acceptHeader: '*/*',
-        'accept-encoding': 'gzip',
-        'User-Agent': 'Agattp',
-        'Host': '$server:${container.httpPort}',
-        'X-tesT': 'test',
-      };
+      test('Capitalize Headers', () async {
+        final Map<String, String> extraHeaders = <String, String>{
+          HttpHeaders.acceptHeader: '*/*',
+          'accept-encoding': 'gzip',
+          'User-Agent': 'Agattp',
+          'Host': '$server:${container.httpPort}',
+          'X-tesT': 'test',
+        };
 
-      final List<String> results = <String>[
-        'Accept',
-        'Accept-Encoding',
-        'User-Agent',
-        'Host',
-        'X-Test',
-      ];
+        final List<String> results = <String>[
+          'Accept',
+          'Accept-Encoding',
+          'User-Agent',
+          'Host',
+          'X-Test',
+        ];
 
-      final AgattpResponseJson<Map<String, dynamic>> response =
-          await Agattp().getJson(
-        Uri.parse('http://$server:${container.httpPort}/status/200'),
-        extraHeaders: extraHeaders,
-      );
+        final AgattpResponseJson<Map<String, dynamic>> response =
+            await Agattp().getJson(
+          Uri.parse('http://$server:${container.httpPort}/status/200'),
+          extraHeaders: extraHeaders,
+        );
 
-      expect(response.statusCode, 200);
-      expect(response.reasonPhrase, 'OK');
-      expect(response.isRedirect, false);
-      expect(response.json['headers'] is Map<String, dynamic>, true);
+        expect(response.statusCode, 200);
+        expect(response.reasonPhrase, 'OK');
+        expect(response.isRedirect, false);
+        expect(response.json['headers'] is Map<String, dynamic>, true);
 
-      final Map<String, dynamic> headers = response.json['headers'];
+        final Map<String, dynamic> headers = response.json['headers'];
 
-      for (final String key in headers.keys) {
-        expect(results.contains(key), true);
-      }
-    });
+        for (final String key in headers.keys) {
+          expect(results.contains(key), true);
+        }
+      });
 
-    test('Lowercase Headers', () async {
-      final Map<String, String> extraHeaders = <String, String>{
-        HttpHeaders.acceptHeader: '*/*',
-        'accept-encoding': 'gzip',
-        'User-Agent': 'Agattp',
-        'Host': '$server:${container.httpPort}',
-        'X-tesT': 'test',
-      };
+      test('Lowercase Headers', () async {
+        final Map<String, String> extraHeaders = <String, String>{
+          HttpHeaders.acceptHeader: '*/*',
+          'accept-encoding': 'gzip',
+          'User-Agent': 'Agattp',
+          'Host': '$server:${container.httpPort}',
+          'X-tesT': 'test',
+        };
 
-      final List<String> results = <String>[
-        'accept',
-        'accept-encoding',
-        'user-agent',
-        'host',
-        'x-test',
-      ];
+        final List<String> results = <String>[
+          'accept',
+          'accept-encoding',
+          'user-agent',
+          'host',
+          'x-test',
+        ];
 
-      final AgattpResponseJson<Map<String, dynamic>> response = await Agattp(
-        config: const AgattpConfig(
-          headerKeyCase: HeaderKeyCase.lowercase,
-        ),
-      ).getJson(
-        Uri.parse('http://$server:${container.httpPort}/status/200'),
-        extraHeaders: extraHeaders,
-      );
+        final AgattpResponseJson<Map<String, dynamic>> response = await Agattp(
+          config: const AgattpConfig(
+            headerKeyCase: HeaderKeyCase.lowercase,
+          ),
+        ).getJson(
+          Uri.parse('http://$server:${container.httpPort}/status/200'),
+          extraHeaders: extraHeaders,
+        );
 
-      expect(response.statusCode, 200);
-      expect(response.reasonPhrase, 'OK');
-      expect(response.isRedirect, false);
-      expect(response.json['headers'] is Map<String, dynamic>, true);
+        expect(response.statusCode, 200);
+        expect(response.reasonPhrase, 'OK');
+        expect(response.isRedirect, false);
+        expect(response.json['headers'] is Map<String, dynamic>, true);
 
-      final Map<String, dynamic> headers = response.json['headers'];
+        final Map<String, dynamic> headers = response.json['headers'];
 
-      for (final String key in headers.keys) {
-        expect(results.contains(key), true);
-      }
-    });
+        for (final String key in headers.keys) {
+          expect(results.contains(key), true);
+        }
+      });
 
-    test('Preserve Headers', () async {
-      final Map<String, String> extraHeaders = <String, String>{
-        HttpHeaders.acceptHeader: '*/*',
-        'accept-encoding': 'gzip',
-        'User-Agent': 'Agattp',
-        'Host': '$server:${container.httpPort}',
-        'X-tesT': 'test',
-      };
+      test('Preserve Headers', () async {
+        final Map<String, String> extraHeaders = <String, String>{
+          HttpHeaders.acceptHeader: '*/*',
+          'accept-encoding': 'gzip',
+          'User-Agent': 'Agattp',
+          'Host': '$server:${container.httpPort}',
+          'X-tesT': 'test',
+        };
 
-      final List<String> results = <String>[
-        'accept',
-        'accept-encoding',
-        'User-Agent',
-        'Host',
-        'X-tesT',
-      ];
+        final List<String> results = <String>[
+          'accept',
+          'accept-encoding',
+          'User-Agent',
+          'Host',
+          'X-tesT',
+        ];
 
-      final AgattpResponseJson<Map<String, dynamic>> response = await Agattp(
-        config: const AgattpConfig(
-          headerKeyCase: HeaderKeyCase.preserve,
-        ),
-      ).getJson(
-        Uri.parse('http://$server:${container.httpPort}/status/200'),
-        extraHeaders: extraHeaders,
-      );
+        final AgattpResponseJson<Map<String, dynamic>> response = await Agattp(
+          config: const AgattpConfig(
+            headerKeyCase: HeaderKeyCase.preserve,
+          ),
+        ).getJson(
+          Uri.parse('http://$server:${container.httpPort}/status/200'),
+          extraHeaders: extraHeaders,
+        );
 
-      expect(response.statusCode, 200);
-      expect(response.reasonPhrase, 'OK');
-      expect(response.isRedirect, false);
-      expect(response.json['headers'] is Map<String, dynamic>, true);
+        expect(response.statusCode, 200);
+        expect(response.reasonPhrase, 'OK');
+        expect(response.isRedirect, false);
+        expect(response.json['headers'] is Map<String, dynamic>, true);
 
-      final Map<String, dynamic> headers = response.json['headers'];
+        final Map<String, dynamic> headers = response.json['headers'];
 
-      for (final String key in headers.keys) {
-        expect(results.contains(key), true);
-      }
-    });
+        for (final String key in headers.keys) {
+          expect(results.contains(key), true);
+        }
+      });
 
-    ///
-    tearDownAll(container.stop);
-  });
+      ///
+      tearDownAll(container.stop);
+    },
+    onPlatform: <String, dynamic>{
+      'mac-os': const Skip('No docker installed on GitHub actions.'),
+      'windows': const Skip('Need a windows container image.'),
+    },
+  );
 }

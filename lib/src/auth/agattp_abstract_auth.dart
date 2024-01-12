@@ -1,3 +1,5 @@
+import 'package:agattp/src/agattp_method.dart';
+
 ///
 ///
 ///
@@ -10,5 +12,5 @@ abstract class AgattpAbstractAuth {
   ///
   ///
   ///
-  Map<String, String> get authHeaders;
+  Future<Map<String, String>> getAuthHeaders(AgattpMethod method);
 }

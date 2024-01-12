@@ -42,7 +42,7 @@ class AgattpWebHeaders implements HttpHeaders {
   @override
   int? port;
 
-  HeaderKeyCase keyCase = HeaderKeyCase.preserve;
+  HeaderKeyCase keyCase = HeaderKeyCase.capitalize;
 
   ///
   ///

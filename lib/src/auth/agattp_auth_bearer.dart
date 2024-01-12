@@ -17,7 +17,7 @@ class AgattpAuthBearer extends AgattpAbstractAuth {
   ///
   ///
   @override
-  Future<Map<String, String>> getAuthHeaders(_) async => <String, String>{
+  Future<Map<String, String>> getAuthHeaders(_, __) async => <String, String>{
         if (token != null && token!.isNotEmpty)
           HttpHeaders.authorizationHeader: 'Bearer $token',
       };

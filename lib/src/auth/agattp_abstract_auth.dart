@@ -12,5 +12,5 @@ abstract class AgattpAbstractAuth {
   ///
   ///
   ///
-  Future<Map<String, String>> getAuthHeaders(AgattpMethod method);
+  Future<Map<String, String>> getAuthHeaders(AgattpMethod method, Uri uri);
 }

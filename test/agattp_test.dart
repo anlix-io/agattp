@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:agattp/agattp.dart';
-import 'package:crypto/crypto.dart';
 import 'package:test/test.dart';
 
 ///
@@ -361,7 +359,7 @@ void main() {
       expect(response.json, isNotEmpty);
     });
 
-    test('Basic Auth', () async {
+    test('Basic Auth Success', () async {
       const String user = 'user';
       const String pass = 'pass';
 
@@ -428,6 +426,26 @@ void main() {
       } on Exception catch (e) {
         expect(e, isA<TimeoutException>());
       }
+    });
+
+    test('Digest MD5', () async {
+      const String username = 'user';
+      const String password = 'pass';
+      const String algorithm = 'MD5';
+
+      const String url = 'https://httpbingo.org'
+          '/digest-auth/auth/$username/$password/$algorithm';
+
+      final AgattpResponseJson<Map<String, dynamic>> response =
+          await Agattp.authDigest(username: username, password: password)
+              .getJson(Uri.parse(url));
+
+      expect(response.statusCode, 200);
+      expect(response.reasonPhrase, 'OK');
+      expect(response.isRedirect, false);
+      expect(response.isPersistentConnection, true);
+      expect(response.json['authorized'], true);
+      expect(response.json['user'], username);
     });
   });
 }

@@ -107,11 +107,7 @@ class AgattpAuthDigest extends AgattpAbstractAuth {
         .map((MapEntry<String, String> e) => '${e.key}=${e.value}')
         .join(', ');
 
-    print('Token: $token');
-
-    return <String, String>{
-      HttpHeaders.authorizationHeader: 'Digest $token',
-    };
+    return <String, String>{HttpHeaders.authorizationHeader: 'Digest $token'};
   }
 
   ///

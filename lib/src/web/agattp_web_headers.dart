@@ -1,10 +1,17 @@
+import 'dart:collection';
 import 'dart:io';
+
+import 'package:agattp/src/agattp_utils.dart';
 
 ///
 ///
 ///
 class AgattpWebHeaders implements HttpHeaders {
-  final Map<String, List<String>> _headers = <String, List<String>>{};
+  final LinkedHashMap<String, List<String>> _headers =
+      LinkedHashMap<String, List<String>>(
+    equals: (String k1, String k2) => k1.toLowerCase() == k2.toLowerCase(),
+    hashCode: (String k) => k.toLowerCase().hashCode,
+  );
 
   // TODO(anyone): properly implement these stubbed properties and methods?
   /// All of these go unused for our current use cases, so they're being stubbed
@@ -35,10 +42,12 @@ class AgattpWebHeaders implements HttpHeaders {
   @override
   int? port;
 
+  HeaderKeyCase keyCase = HeaderKeyCase.preserve;
+
   ///
   ///
   ///
-  AgattpWebHeaders.from(Map<String, String> map) {
+  AgattpWebHeaders.from(this.keyCase, Map<String, String> map) {
     map.forEach(_add);
   }
 
@@ -52,9 +61,7 @@ class AgattpWebHeaders implements HttpHeaders {
   ///
   ///
   void _add(String name, String value) {
-    final String lowerName = name.toLowerCase();
-
-    switch (lowerName) {
+    switch (name.toLowerCase()) {
       case HttpHeaders.contentLengthHeader:
         contentLength = int.tryParse(value) ?? -1;
         break;
@@ -65,12 +72,14 @@ class AgattpWebHeaders implements HttpHeaders {
       //   break;
     }
 
-    if (_headers.containsKey(lowerName)) {
-      if (!_headers[lowerName]!.contains(value)) {
-        _headers[lowerName]!.add(value);
+    final String nameToUse = Utils.headerKey(keyCase, name);
+
+    if (_headers.containsKey(nameToUse)) {
+      if (!_headers[nameToUse]!.contains(value)) {
+        _headers[nameToUse]!.add(value);
       }
     } else {
-      _headers[lowerName] = <String>[value];
+      _headers[nameToUse] = <String>[value];
     }
   }
 
@@ -78,11 +87,12 @@ class AgattpWebHeaders implements HttpHeaders {
   ///
   ///
   void _remove(String name, String value) {
-    final String lowerName = name.toLowerCase();
-    if (_headers.containsKey(lowerName)) {
-      _headers[lowerName]!.remove(value);
-      if (_headers[lowerName]!.isEmpty) {
-        _headers.remove(lowerName);
+    final String nameToUse = Utils.headerKey(keyCase, name);
+
+    if (_headers.containsKey(nameToUse)) {
+      _headers[nameToUse]!.remove(value);
+      if (_headers[nameToUse]!.isEmpty) {
+        _headers.remove(nameToUse);
       }
     }
   }
@@ -110,7 +120,8 @@ class AgattpWebHeaders implements HttpHeaders {
   ///
   @override
   void set(String name, Object value, {bool preserveHeaderCase = false}) {
-    final String nameToUse = preserveHeaderCase ? name : name.toLowerCase();
+    final String nameToUse = Utils.headerKey(keyCase, name);
+
     if (value is Iterable) {
       _headers[nameToUse] = value.map((dynamic v) => v.toString()).toList();
     } else {
@@ -122,8 +133,9 @@ class AgattpWebHeaders implements HttpHeaders {
   ///
   ///
   @override
-  void add(String name, Object value, {bool preserveHeaderCase = false}) {
-    final String nameToUse = preserveHeaderCase ? name : name.toLowerCase();
+  void add(String name, Object value, {bool preserveHeaderCase = true}) {
+    final String nameToUse = Utils.headerKey(keyCase, name);
+
     if (value is Iterable) {
       _addAll(nameToUse, value.map((dynamic v) => v.toString()));
     } else {
@@ -153,7 +165,7 @@ class AgattpWebHeaders implements HttpHeaders {
   ///
   ///
   @override
-  void removeAll(String name) => _headers.remove(name.toLowerCase());
+  void removeAll(String name) => _headers.remove(name);
 
   ///
   ///
@@ -167,9 +179,9 @@ class AgattpWebHeaders implements HttpHeaders {
   ///
   @override
   String? value(String name) {
-    final String lowerName = name.toLowerCase();
-    if (_headers.containsKey(lowerName) && _headers[lowerName]!.isNotEmpty) {
-      return _headers[lowerName]!.first;
+    final String nameToUse = Utils.headerKey(keyCase, name);
+    if (_headers.containsKey(nameToUse) && _headers[nameToUse]!.isNotEmpty) {
+      return _headers[nameToUse]!.first;
     }
     return null;
   }
@@ -178,7 +190,8 @@ class AgattpWebHeaders implements HttpHeaders {
   ///
   ///
   @override
-  List<String>? operator [](String name) => _headers[name.toLowerCase()];
+  List<String>? operator [](String name) =>
+      _headers[Utils.headerKey(keyCase, name)];
 
   ///
   ///
@@ -203,14 +216,16 @@ class AgattpWebHeaders implements HttpHeaders {
     if (!_headers.containsKey(HttpHeaders.setCookieHeader)) {
       return <Cookie>[];
     }
+
     final Map<String, String> rawInfo = <String, String>{};
+
     for (final String rawValue in _headers[HttpHeaders.setCookieHeader]!) {
       final Cookie cookie = Cookie.fromSetCookieValue(rawValue);
       rawInfo[cookie.name] = cookie.value; // This prevents duplicate cookies
     }
+
     return rawInfo.entries
         .map((MapEntry<String, String> entry) => Cookie(entry.key, entry.value))
         .toList();
   }
-
 }

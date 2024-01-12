@@ -14,15 +14,32 @@ class Utils {
   ///
   ///
   ///
-  static String capitalizeHeaderKey(String key) {
-    final List<String> parts = key.split('-');
+  static String capitalizeHeaderKey(
+    String key, {
+    String separator = '-',
+  }) {
+    final List<String> parts = key.split(separator);
 
     for (int i = 0; i < parts.length; i++) {
       parts[i] =
           parts[i][0].toUpperCase() + parts[i].substring(1).toLowerCase();
     }
 
-    return parts.join('-');
+    return parts.join(separator);
+  }
+
+  ///
+  ///
+  ///
+  static String headerKey(HeaderKeyCase keyCase, String key) {
+    switch (keyCase) {
+      case HeaderKeyCase.lowercase:
+        return key.toLowerCase();
+      case HeaderKeyCase.capitalize:
+        return capitalizeHeaderKey(key);
+      case HeaderKeyCase.preserve:
+        return key;
+    }
   }
 
   ///
@@ -35,17 +52,7 @@ class Utils {
     final Map<String, String> newHeaders = <String, String>{};
 
     for (final MapEntry<String, String> entry in headers.entries) {
-      switch (keyCase) {
-        case HeaderKeyCase.lowercase:
-          newHeaders[entry.key.toLowerCase()] = entry.value;
-          break;
-        case HeaderKeyCase.capitalize:
-          newHeaders[capitalizeHeaderKey(entry.key)] = entry.value;
-          break;
-        case HeaderKeyCase.preserve:
-          newHeaders[entry.key] = entry.value;
-          break;
-      }
+      newHeaders[headerKey(keyCase, entry.key)] = entry.value;
     }
 
     return newHeaders;

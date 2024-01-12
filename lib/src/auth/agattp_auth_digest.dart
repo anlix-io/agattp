@@ -17,7 +17,7 @@ class AgattpAuthDigest extends AgattpAbstractAuth {
   final Map<String, String> map = <String, String>{};
 
   bool _ready = false;
-  int nc = 0;
+  int _nc = 0;
   late String _realm;
   late String _nonce;
   late String _qop;
@@ -30,6 +30,19 @@ class AgattpAuthDigest extends AgattpAbstractAuth {
     required this.username,
     required this.password,
   }) : super();
+
+  ///
+  ///
+  ///
+  void reset() {
+    _ready = false;
+    _nc = 0;
+  }
+
+  ///
+  ///
+  ///
+  bool get ready => _ready;
 
   ///
   ///
@@ -87,9 +100,9 @@ class AgattpAuthDigest extends AgattpAbstractAuth {
 
     map['cnonce'] = '"$_cnonce"';
 
-    nc++;
+    _nc++;
 
-    map['nc'] = nc.toString().padLeft(8, '0');
+    map['nc'] = _nc.toString().padLeft(8, '0');
 
     map['response'] = '"${_getResponse(
       username: username,

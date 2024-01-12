@@ -1,6 +1,6 @@
 name: agattp
 description: Anlix Gateway Alternative Text Transfer Protocol.
-version: 0.0.3
+version: 0.0.4
 repository: https://github.com/anlix-io/agattp/
 #homepage:
 
@@ -9,26 +9,26 @@ environment:
 
 dependencies:
   # https://pub.dev/packages/convert
-  convert: ^3.1.1
+  convert: ^3.1.0
 
   # https://pub.dev/packages/crypto
-  crypto: ^3.0.3
+  crypto: ^3.0.0
 
   # https://pub.dev/packages/http
   http: ^1.1.0
 
 dev_dependencies:
   # https://pub.dev/packages/coverage
-  coverage: ^1.7.1
+  coverage: ^1.7.2
 
   # https://pub.dev/packages/lints
   lints: ^3.0.0
 
   # https://pub.dev/packages/markdown
-  markdown: ^7.1.0
+  markdown: ^7.1.1
 
   # https://pub.dev/packages/test
-  test: ^1.24.0
+  test: ^1.25.1
 
   # https://pub.dev/packages/testainers
   testainers: ^0.0.9

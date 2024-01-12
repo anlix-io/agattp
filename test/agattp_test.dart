@@ -545,4 +545,120 @@ void main() {
       expect(response.json['user'], username);
     });
   });
+
+  test('Digest SHA-256 Auth Get', () async {
+    const String username = 'user';
+    const String password = 'pass';
+    const String algorithm = 'SHA-256';
+
+    const String url = 'https://httpbingo.org'
+        '/digest-auth/auth/$username/$password/$algorithm';
+
+    final AgattpAuthDigest authDigest =
+        AgattpAuthDigest(username: username, password: password);
+
+    expect(authDigest.ready, false);
+
+    final Agattp agattpDigest = Agattp(
+      config: AgattpConfig(auth: authDigest),
+    );
+
+    final AgattpResponseJson<Map<String, dynamic>> response1 =
+        await agattpDigest.getJson(Uri.parse(url));
+
+    expect(response1.statusCode, 200);
+    expect(response1.reasonPhrase, 'OK');
+    expect(response1.isRedirect, false);
+    expect(response1.isPersistentConnection, true);
+    expect(response1.json['authorized'], true);
+    expect(response1.json['user'], username);
+
+    expect(authDigest.ready, true);
+
+    final AgattpResponseJson<Map<String, dynamic>> response2 =
+        await agattpDigest.getJson(Uri.parse(url));
+
+    expect(response2.statusCode, 200);
+    expect(response2.reasonPhrase, 'OK');
+    expect(response2.isRedirect, false);
+    expect(response2.isPersistentConnection, true);
+    expect(response2.json['authorized'], true);
+    expect(response2.json['user'], username);
+
+    authDigest.reset();
+
+    expect(authDigest.ready, false);
+
+    final AgattpResponseJson<Map<String, dynamic>> response3 =
+        await agattpDigest.getJson(Uri.parse(url));
+
+    expect(response3.statusCode, 200);
+    expect(response3.reasonPhrase, 'OK');
+    expect(response3.isRedirect, false);
+    expect(response3.isPersistentConnection, true);
+    expect(response3.json['authorized'], true);
+    expect(response3.json['user'], username);
+
+    expect(authDigest.ready, true);
+  });
+
+  test('Digest SHA-256 Auth Post', () async {
+    const String username = 'user';
+    const String password = 'pass';
+    const String algorithm = 'SHA-256';
+
+    const String url = 'https://httpbingo.org'
+        '/digest-auth/auth/$username/$password/$algorithm';
+
+    final AgattpResponseJson<Map<String, dynamic>> response =
+        await Agattp.authDigest(username: username, password: password)
+            .postJson(Uri.parse(url));
+
+    expect(response.statusCode, 200);
+    expect(response.reasonPhrase, 'OK');
+    expect(response.isRedirect, false);
+    expect(response.isPersistentConnection, true);
+    expect(response.json['authorized'], true);
+    expect(response.json['user'], username);
+  });
+
+  test('Digest SHA-256 Auth Put', () async {
+    const String username = 'user';
+    const String password = 'pass';
+    const String algorithm = 'SHA-256';
+
+    const String url = 'https://httpbingo.org'
+        '/digest-auth/auth/$username/$password/$algorithm';
+
+    final AgattpResponseJson<Map<String, dynamic>> response =
+        await Agattp.authDigest(username: username, password: password)
+            .putJson(Uri.parse(url));
+
+    expect(response.statusCode, 200);
+    expect(response.reasonPhrase, 'OK');
+    expect(response.isRedirect, false);
+    expect(response.isPersistentConnection, true);
+    expect(response.json['authorized'], true);
+    expect(response.json['user'], username);
+  });
+
+  test('Digest SHA-256 Auth Delete', () async {
+    const String username = 'user';
+    const String password = 'pass';
+    const String algorithm = 'SHA-256';
+
+    const String url = 'https://httpbingo.org'
+        '/digest-auth/auth/$username/$password/$algorithm';
+
+    final AgattpResponseJson<Map<String, dynamic>> response =
+        await Agattp.authDigest(username: username, password: password)
+            .deleteJson(Uri.parse(url));
+
+    expect(response.statusCode, 200);
+    expect(response.reasonPhrase, 'OK');
+    expect(response.isRedirect, false);
+    expect(response.isPersistentConnection, true);
+    expect(response.json['authorized'], true);
+    expect(response.json['user'], username);
+  });
 }

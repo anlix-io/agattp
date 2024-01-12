@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:agattp/src/agattp_abstract_call.dart';
 import 'package:agattp/src/agattp_method.dart';
 import 'package:agattp/src/agattp_response.dart';
+import 'package:agattp/src/agattp_utils.dart';
 import 'package:agattp/src/native/agattp_response_native.dart';
 
 ///
@@ -64,8 +65,13 @@ class AgattpCall extends AgattpAbstractCall {
 
     request.followRedirects = config.followRedirects;
 
-    for (final MapEntry<String, String> entry in headers.entries) {
-      request.headers.set(entry.key, entry.value);
+    final Map<String, String> newHeaders = Utils.headers(
+      headers,
+      config.headerKeyCase,
+    );
+
+    for (final MapEntry<String, String> entry in newHeaders.entries) {
+      request.headers.set(entry.key, entry.value, preserveHeaderCase: true);
     }
 
     if (body != null) {

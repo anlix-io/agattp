@@ -32,6 +32,4 @@ jobs:
         run: dart analyze --fatal-infos
 
       - name: Dart Test
-        run: |
-          dart test --coverage=coverage \
-          --concurrency=$(grep -c processor /proc/cpuinfo)
+        run: dart test

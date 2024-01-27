@@ -86,6 +86,6 @@ class AgattpCall extends AgattpAbstractCall {
         break;
     }
 
-    return AgattpResponseWeb(config.headerKeyCase, response);
+    return AgattpResponseWeb(config, response);
   }
 }

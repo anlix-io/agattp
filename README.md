@@ -72,4 +72,10 @@ void main() async {
 
 ---
 
+### For fastest tests
+
+```shell
+dart test -r github -j $(grep -c processor /proc/cpuinfo)
+```
+
 ### https://anlix.io

@@ -1,8 +1,7 @@
 import 'dart:io';
 
-import 'package:agattp/agattp.dart';
+import 'package:agattp/src/agattp_config.dart';
 import 'package:agattp/src/agattp_response.dart';
-import 'package:agattp/src/agattp_utils.dart';
 import 'package:agattp/src/web/agattp_web_headers.dart';
 import 'package:http/http.dart';
 
@@ -11,20 +10,20 @@ import 'package:http/http.dart';
 ///
 class AgattpResponseWeb extends AgattpResponse {
   final Response _response;
-  final AgattpWebHeaders _headers;
+  final AgattpConfig _config;
 
   ///
   ///
   ///
-  AgattpResponseWeb( HeaderKeyCase keyCase, Response response)
+  AgattpResponseWeb(AgattpConfig config, Response response)
       : _response = response,
-        _headers = AgattpWebHeaders.from(keyCase, response.headers);
+        _config = config;
 
   ///
   ///
   ///
   @override
-  String get body => _response.body;
+  String get body => _config.encoding.decode(_response.body.codeUnits);
 
   ///
   ///
@@ -54,11 +53,13 @@ class AgattpResponseWeb extends AgattpResponse {
   ///
   ///
   @override
-  HttpHeaders get headers => _headers;
+  HttpHeaders get headers =>
+      AgattpWebHeaders.from(_config.headerKeyCase, _response.headers);
 
   ///
   ///
   ///
   @override
-  List<Cookie> get cookies => _headers.cookies;
+  List<Cookie> get cookies =>
+      AgattpWebHeaders.from(_config.headerKeyCase, _response.headers).cookies;
 }

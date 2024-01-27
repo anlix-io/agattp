@@ -62,7 +62,7 @@ void main() async {
       Uri.parse('https://httpbingo.org/basic-auth/user/pass'),
     );
 
-  /// Auth Digest (MD5 only)
+  /// Auth Digest
   final AgattpResponseJson<Map<String, dynamic>> response =
     await Agattp.authDigest(username: 'user', password: 'pass').getJson(
       Uri.parse('https://httpbingo.org/digest-auth/auth/user/pass/MD5'),
@@ -71,5 +71,11 @@ void main() async {
 ```
 
 ---
+
+### For fastest tests
+
+```shell
+dart test -r github -j $(grep -c processor /proc/cpuinfo)
+```
 
 ### https://anlix.io

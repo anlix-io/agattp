@@ -1,3 +1,8 @@
+## 0.0.5
+
+* Creating Digest auth with SHA-256 algorithm.
+* Fixing web http response encoding.
+
 ## 0.0.4 - 2024-01-12
 
 * Creating Digest auth, MD5 only.

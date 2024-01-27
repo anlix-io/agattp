@@ -10,6 +10,30 @@ import 'package:crypto/crypto.dart';
 ///
 ///
 ///
+enum DigestAlgorithm {
+  md5,
+  sha256;
+
+  ///
+  ///
+  ///
+  static DigestAlgorithm parse(dynamic value) {
+    final String name =
+        value.toString().toLowerCase().replaceAll(RegExp(r'-|\s|_'), '');
+
+    for (final DigestAlgorithm algorithm in DigestAlgorithm.values) {
+      if (algorithm.name == name) {
+        return algorithm;
+      }
+    }
+
+    return DigestAlgorithm.md5;
+  }
+}
+
+///
+///
+///
 class AgattpAuthDigest extends AgattpAbstractAuth {
   final String username;
   final String password;
@@ -22,6 +46,7 @@ class AgattpAuthDigest extends AgattpAbstractAuth {
   late String _nonce;
   late String _qop;
   late String _cnonce;
+  late DigestAlgorithm _algorithm;
 
   ///
   ///
@@ -75,6 +100,8 @@ class AgattpAuthDigest extends AgattpAbstractAuth {
       }
 
       map.remove('stale');
+
+      _algorithm = DigestAlgorithm.parse(map['algorithm']);
 
       _realm = map['realm'] ?? '';
 
@@ -137,14 +164,31 @@ class AgattpAuthDigest extends AgattpAbstractAuth {
     required String cnonce,
     required String qop,
   }) {
-    final String h1 =
-        md5.convert(utf8.encode('$username:$realm:$password')).toString();
+    switch (_algorithm) {
+      ///
+      case DigestAlgorithm.md5:
+        final String h1 =
+            md5.convert(utf8.encode('$username:$realm:$password')).toString();
 
-    final String h2 = md5.convert(utf8.encode('$method:$path')).toString();
+        final String h2 = md5.convert(utf8.encode('$method:$path')).toString();
 
-    return md5
-        .convert(utf8.encode('$h1:$nonce:$nc:$cnonce:$qop:$h2'))
-        .toString();
+        return md5
+            .convert(utf8.encode('$h1:$nonce:$nc:$cnonce:$qop:$h2'))
+            .toString();
+
+      ///
+      case DigestAlgorithm.sha256:
+        final String h1 = sha256
+            .convert(utf8.encode('$username:$realm:$password'))
+            .toString();
+
+        final String h2 =
+            sha256.convert(utf8.encode('$method:$path')).toString();
+
+        return sha256
+            .convert(utf8.encode('$h1:$nonce:$nc:$cnonce:$qop:$h2'))
+            .toString();
+    }
   }
 
   ///

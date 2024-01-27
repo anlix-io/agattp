@@ -62,7 +62,9 @@ jobs:
         run: dart pub get
 
       - name: Dart Test
-        run: dart test --coverage=coverage
+        run: |
+          dart test --coverage=coverage \
+          --concurrency=$(grep -c processor /proc/cpuinfo)
 
       - name: Creating package filter.
         run: dart run helpers/package.dart

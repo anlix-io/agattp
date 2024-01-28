@@ -21,6 +21,10 @@ class Utils {
     final List<String> parts = key.split(separator);
 
     for (int i = 0; i < parts.length; i++) {
+      if (parts[i].isEmpty) {
+        continue;
+      }
+
       parts[i] =
           parts[i][0].toUpperCase() + parts[i].substring(1).toLowerCase();
     }
@@ -56,5 +60,27 @@ class Utils {
     }
 
     return newHeaders;
+  }
+
+  ///
+  ///
+  ///
+  static String removeQuotes(String value) =>
+      value.replaceAll(RegExp(r'^"|"$'), '');
+
+  ///
+  ///
+  ///
+  static List<String> splitFirst(String value, String separator) {
+    final int index = value.indexOf(separator);
+
+    if (index == -1) {
+      return <String>[value];
+    }
+
+    return <String>[
+      value.substring(0, index),
+      value.substring(index + separator.length),
+    ];
   }
 }

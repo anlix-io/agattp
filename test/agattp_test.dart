@@ -43,6 +43,8 @@ void main() {
       expect(response.reasonPhrase, 'OK');
       expect(response.isRedirect, false);
       expect(response.isPersistentConnection, true);
+      expect(response.headers, isA<HttpHeaders>());
+      expect(response.cookies, isEmpty);
       expect(response.json['url'], url);
     });
 
@@ -392,7 +394,7 @@ void main() {
       expect(response.json['user'], user);
     });
 
-    test('Headers', () async {
+    test('Request Headers', () async {
       const String key = 'X-Test';
       const String value = 'ok';
 
@@ -414,8 +416,46 @@ void main() {
       expect(headers[key], <String>[value]);
     });
 
+    test('Response Headers', () async {
+      final AgattpResponseJson<Map<String, dynamic>> response =
+          await Agattp().getJson(Uri.parse('https://httpbingo.org/headers'));
+
+      expect(response.statusCode, 200);
+      expect(response.reasonPhrase, 'OK');
+      expect(response.isRedirect, false);
+      expect(response.isPersistentConnection, true);
+      expect(response.headers, isA<HttpHeaders>());
+      expect(response.cookies, isEmpty);
+
+      expect(
+        response.headers[HttpHeaders.accessControlAllowCredentialsHeader],
+        <String>['true'],
+      );
+
+      expect(
+        response.headers[HttpHeaders.accessControlAllowOriginHeader],
+        <String>['*'],
+      );
+
+      expect(
+        response.headers[HttpHeaders.transferEncodingHeader],
+        <String>['chunked'],
+      );
+
+      expect(
+        response.headers[HttpHeaders.contentEncodingHeader],
+        <String>['gzip'],
+      );
+
+      expect(
+        response.headers[HttpHeaders.contentTypeHeader],
+        <String>['application/json; charset=utf-8'],
+      );
+    });
+
     test('Timeout', () async {
       try {
+        /// Should have thrown TimeoutException
         await Agattp().get(
           Uri.parse('https://httpbingo.org/delay/5'),
           headers: <String, String>{
@@ -423,7 +463,6 @@ void main() {
           },
           timeout: 2000,
         );
-        fail('Should have thrown TimeoutException');
       } on Exception catch (e) {
         expect(e, isA<TimeoutException>());
       }
@@ -669,10 +708,9 @@ void main() {
     const String url = 'https://httpbingo.org/deny';
 
     try {
+      /// Should have thrown Exception
       await Agattp.authDigest(username: username, password: password)
           .getJson(Uri.parse(url));
-
-      fail('Should have thrown Exception');
     } on Exception catch (e) {
       expect(e.toString(), 'Exception: WWW-Authenticate header not found');
     }

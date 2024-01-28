@@ -164,31 +164,25 @@ class AgattpAuthDigest extends AgattpAbstractAuth {
     required String cnonce,
     required String qop,
   }) {
+    late Hash hash;
+
     switch (_algorithm) {
-      ///
       case DigestAlgorithm.md5:
-        final String h1 =
-            md5.convert(utf8.encode('$username:$realm:$password')).toString();
-
-        final String h2 = md5.convert(utf8.encode('$method:$path')).toString();
-
-        return md5
-            .convert(utf8.encode('$h1:$nonce:$nc:$cnonce:$qop:$h2'))
-            .toString();
-
-      ///
+        hash = md5;
+        break;
       case DigestAlgorithm.sha256:
-        final String h1 = sha256
-            .convert(utf8.encode('$username:$realm:$password'))
-            .toString();
-
-        final String h2 =
-            sha256.convert(utf8.encode('$method:$path')).toString();
-
-        return sha256
-            .convert(utf8.encode('$h1:$nonce:$nc:$cnonce:$qop:$h2'))
-            .toString();
+        hash = sha256;
+        break;
     }
+
+    final String h1 =
+        hash.convert(utf8.encode('$username:$realm:$password')).toString();
+
+    final String h2 = hash.convert(utf8.encode('$method:$path')).toString();
+
+    return hash
+        .convert(utf8.encode('$h1:$nonce:$nc:$cnonce:$qop:$h2'))
+        .toString();
   }
 
   ///

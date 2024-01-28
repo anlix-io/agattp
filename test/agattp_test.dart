@@ -661,4 +661,20 @@ void main() {
     expect(response.json['authorized'], true);
     expect(response.json['user'], username);
   });
+
+  test('Digest Auth Error', () async {
+    const String username = 'user';
+    const String password = 'pass';
+
+    const String url = 'https://httpbingo.org/deny';
+
+    try {
+      await Agattp.authDigest(username: username, password: password)
+          .getJson(Uri.parse(url));
+
+      fail('Should have thrown Exception');
+    } on Exception catch (e) {
+      expect(e.toString(), 'Exception: WWW-Authenticate header not found');
+    }
+  });
 }

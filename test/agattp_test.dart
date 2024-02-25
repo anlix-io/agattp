@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:agattp/agattp.dart';
-import 'package:agattp/src/auth/agattp_auth_digest.dart';
 import 'package:test/test.dart';
 
 ///

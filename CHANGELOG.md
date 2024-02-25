@@ -1,4 +1,9 @@
-## 0.0.5
+## 0.0.6 - 2024-02-25
+
+* Adding Digest test.
+* Adding Response Header test.
+
+## 0.0.5 - 2024-01-27
 
 * Creating Digest auth with SHA-256 algorithm.
 * Fixing web http response encoding.

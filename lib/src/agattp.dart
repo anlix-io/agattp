@@ -8,7 +8,6 @@ import 'package:agattp/src/agattp_call.dart'
     if (dart.library.js) 'package:agattp/src/web/agattp_call.dart';
 
 import 'package:agattp/src/agattp_method.dart';
-import 'package:agattp/src/auth/agattp_auth_digest.dart';
 
 ///
 ///

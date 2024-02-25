@@ -10,7 +10,7 @@ import 'package:testainers/testainers.dart';
 ///
 void main() {
   group(
-    '',
+    'Agattp Local',
     () {
       const String server = 'localhost';
       final TestainersHttpbucket container = TestainersHttpbucket();

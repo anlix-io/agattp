@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:agattp/src/agattp.dart';
 import 'package:agattp/src/agattp_method.dart';
 import 'package:agattp/src/agattp_response.dart';
+import 'package:agattp/src/agattp_utils.dart';
 import 'package:agattp/src/auth/agattp_abstract_auth.dart';
 import 'package:crypto/crypto.dart';
 
@@ -91,7 +92,7 @@ class AgattpAuthDigest extends AgattpAbstractAuth {
           wwwAuthenticate.replaceAll(RegExp('^[Dd]igest'), '').split(',');
 
       for (final String part in parts) {
-        final List<String> p2 = _splitFirst(part.trim(), '=');
+        final List<String> p2 = Utils.splitFirst(part.trim(), '=');
         if (p2.length != 2) {
           continue;
         }
@@ -133,14 +134,14 @@ class AgattpAuthDigest extends AgattpAbstractAuth {
 
     map['response'] = '"${_getResponse(
       username: username,
-      realm: _realm.replaceAll(RegExp(r'^"|"$'), ''),
+      realm: Utils.removeQuotes(_realm),
       password: password,
       method: method.name.toUpperCase(),
       path: uri.path,
-      nonce: _nonce.replaceAll(RegExp(r'^"|"$'), ''),
+      nonce: Utils.removeQuotes(_nonce),
       nc: map['nc']!,
       cnonce: _cnonce,
-      qop: _qop.replaceAll(RegExp(r'^"|"$'), ''),
+      qop: Utils.removeQuotes(_qop),
     )}"';
 
     final String token = map.entries
@@ -164,46 +165,26 @@ class AgattpAuthDigest extends AgattpAbstractAuth {
     required String cnonce,
     required String qop,
   }) {
+    late Hash hash;
+
     switch (_algorithm) {
-      ///
       case DigestAlgorithm.md5:
-        final String h1 =
-            md5.convert(utf8.encode('$username:$realm:$password')).toString();
-
-        final String h2 = md5.convert(utf8.encode('$method:$path')).toString();
-
-        return md5
-            .convert(utf8.encode('$h1:$nonce:$nc:$cnonce:$qop:$h2'))
-            .toString();
-
-      ///
+        hash = md5;
+        break;
       case DigestAlgorithm.sha256:
-        final String h1 = sha256
-            .convert(utf8.encode('$username:$realm:$password'))
-            .toString();
-
-        final String h2 =
-            sha256.convert(utf8.encode('$method:$path')).toString();
-
-        return sha256
-            .convert(utf8.encode('$h1:$nonce:$nc:$cnonce:$qop:$h2'))
-            .toString();
-    }
-  }
-
-  ///
-  ///
-  ///
-  List<String> _splitFirst(String value, String separator) {
-    final int index = value.indexOf(separator);
-
-    if (index == -1) {
-      return <String>[value];
+        hash = sha256;
+        break;
     }
 
-    return <String>[
-      value.substring(0, index),
-      value.substring(index + separator.length),
-    ];
+    final String h1 =
+        hash.convert(utf8.encode('$username:$realm:$password')).toString();
+
+    final String h2 = hash.convert(utf8.encode('$method:$path')).toString();
+
+    return hash
+        .convert(utf8.encode('$h1:$nonce:$nc:$cnonce:$qop:$h2'))
+        .toString();
   }
+
+
 }

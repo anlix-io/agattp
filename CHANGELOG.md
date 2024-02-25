@@ -1,4 +1,4 @@
-## 0.0.X
+## 0.0.6 - 2024-02-25
 
 * Adding Digest test.
 * Adding Response Header test.

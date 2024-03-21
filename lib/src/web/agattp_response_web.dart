@@ -23,7 +23,7 @@ class AgattpResponseWeb extends AgattpResponse {
   ///
   ///
   @override
-  String get body => _config.encoding.decode(_response.body.codeUnits);
+  String get body => _config.encoding.decode(_response.bodyBytes);
 
   ///
   ///

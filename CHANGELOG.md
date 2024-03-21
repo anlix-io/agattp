@@ -1,3 +1,7 @@
+## 0.0.7 - 2024-03-21
+
+* Fixing body encoding in AgattpResponseWeb.
+
 ## 0.0.6 - 2024-02-25
 
 * Adding Digest test.

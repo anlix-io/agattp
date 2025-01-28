@@ -2,23 +2,16 @@ import 'dart:io';
 
 import 'package:agattp/src/auth/agattp_abstract_auth.dart';
 
-///
-///
-///
-class AgattpAuthBearer extends AgattpAbstractAuth {
+/// Implementation of the Bearer Token authentication strategy
+class AgattpAuthBearer implements AgattpAuthInterface {
+  /// The Bearer Token used for authenticating in the server
   final String? token;
 
-  ///
-  ///
-  ///
-  const AgattpAuthBearer(this.token) : super();
+  const AgattpAuthBearer(this.token);
 
-  ///
-  ///
-  ///
   @override
   Future<Map<String, String>> getAuthHeaders(_, __) async => <String, String>{
-        if (token != null && token!.isNotEmpty)
-          HttpHeaders.authorizationHeader: 'Bearer $token',
-      };
+    if (token?.isNotEmpty ?? false)
+      HttpHeaders.authorizationHeader: 'Bearer $token',
+  };
 }

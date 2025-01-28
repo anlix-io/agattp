@@ -35,7 +35,7 @@ void main() {
     test('GET Json With Content', () async {
       const String url = 'https://httpbingo.org/get?test=ok';
 
-      final AgattpResponseJson<Map<String, dynamic>> response =
+      final AgattpJsonResponse<Map<String, dynamic>> response =
           await Agattp().getJson(Uri.parse(url));
 
       expect(response.statusCode, 200);
@@ -50,7 +50,7 @@ void main() {
     test('GET Json No Content', () async {
       const String url = 'https://httpbingo.org/status/204';
 
-      final AgattpResponseJson<void> response =
+      final AgattpJsonResponse<void> response =
           await Agattp().getJson(Uri.parse(url));
 
       expect(response.statusCode, 204);
@@ -70,7 +70,7 @@ void main() {
     test('HEAD Json', () async {
       const String url = 'https://httpbingo.org/head?test=ok';
 
-      final AgattpResponseJson<Map<String, dynamic>> response =
+      final AgattpJsonResponse<Map<String, dynamic>> response =
           await Agattp().headJson(Uri.parse(url));
 
       expect(response.statusCode, 200);
@@ -81,7 +81,7 @@ void main() {
     test('HEAD Json No Content', () async {
       const String url = 'https://httpbingo.org/status/204';
 
-      final AgattpResponseJson<void> response =
+      final AgattpJsonResponse<void> response =
           await Agattp().headJson(Uri.parse(url));
 
       expect(response.statusCode, 204);
@@ -110,7 +110,7 @@ void main() {
         'message': 'Hello World!',
       };
 
-      final AgattpResponseJson<Map<String, dynamic>> response =
+      final AgattpJsonResponse<Map<String, dynamic>> response =
           await Agattp().postJson(Uri.parse(url), body: body);
 
       expect(response.statusCode, 200);
@@ -125,7 +125,7 @@ void main() {
     test('POST Json Without Body', () async {
       const String url = 'https://httpbingo.org/post?test=ok';
 
-      final AgattpResponseJson<Map<String, dynamic>> response =
+      final AgattpJsonResponse<Map<String, dynamic>> response =
           await Agattp().postJson(Uri.parse(url));
 
       expect(response.statusCode, 200);
@@ -140,7 +140,7 @@ void main() {
     test('POST Json No Content', () async {
       const String url = 'https://httpbingo.org/status/204';
 
-      final AgattpResponseJson<void> response =
+      final AgattpJsonResponse<void> response =
           await Agattp().postJson(Uri.parse(url));
 
       expect(response.statusCode, 204);
@@ -169,7 +169,7 @@ void main() {
         'message': 'Hello World!',
       };
 
-      final AgattpResponseJson<Map<String, dynamic>> response =
+      final AgattpJsonResponse<Map<String, dynamic>> response =
           await Agattp().putJson(Uri.parse(url), body: body);
 
       expect(response.statusCode, 200);
@@ -184,7 +184,7 @@ void main() {
     test('PUT Json Without Body', () async {
       const String url = 'https://httpbingo.org/put?test=ok';
 
-      final AgattpResponseJson<Map<String, dynamic>> response =
+      final AgattpJsonResponse<Map<String, dynamic>> response =
           await Agattp().putJson(Uri.parse(url));
 
       expect(response.statusCode, 200);
@@ -199,7 +199,7 @@ void main() {
     test('PUT Json No Content', () async {
       const String url = 'https://httpbingo.org/status/204';
 
-      final AgattpResponseJson<void> response =
+      final AgattpJsonResponse<void> response =
           await Agattp().putJson(Uri.parse(url));
 
       expect(response.statusCode, 204);
@@ -228,7 +228,7 @@ void main() {
         'message': 'Hello World!',
       };
 
-      final AgattpResponseJson<Map<String, dynamic>> response =
+      final AgattpJsonResponse<Map<String, dynamic>> response =
           await Agattp().patchJson(Uri.parse(url), body: body);
 
       expect(response.statusCode, 200);
@@ -243,7 +243,7 @@ void main() {
     test('PATCH Json Without Body', () async {
       const String url = 'https://httpbingo.org/patch?test=ok';
 
-      final AgattpResponseJson<Map<String, dynamic>> response =
+      final AgattpJsonResponse<Map<String, dynamic>> response =
           await Agattp().patchJson(Uri.parse(url));
 
       expect(response.statusCode, 200);
@@ -258,7 +258,7 @@ void main() {
     test('PATCH Json No Content', () async {
       const String url = 'https://httpbingo.org/status/204';
 
-      final AgattpResponseJson<void> response =
+      final AgattpJsonResponse<void> response =
           await Agattp().patchJson(Uri.parse(url));
 
       expect(response.statusCode, 204);
@@ -287,7 +287,7 @@ void main() {
         'message': 'Hello World!',
       };
 
-      final AgattpResponseJson<Map<String, dynamic>> response =
+      final AgattpJsonResponse<Map<String, dynamic>> response =
           await Agattp().deleteJson(Uri.parse(url), body: body);
 
       expect(response.statusCode, 200);
@@ -302,7 +302,7 @@ void main() {
     test('DELETE Json Without Body', () async {
       const String url = 'https://httpbingo.org/delete?test=ok';
 
-      final AgattpResponseJson<Map<String, dynamic>> response =
+      final AgattpJsonResponse<Map<String, dynamic>> response =
           await Agattp().deleteJson(Uri.parse(url));
 
       expect(response.statusCode, 200);
@@ -317,7 +317,7 @@ void main() {
     test('DELETE Json No Content', () async {
       const String url = 'https://httpbingo.org/status/204';
 
-      final AgattpResponseJson<void> response =
+      final AgattpJsonResponse<void> response =
           await Agattp().deleteJson(Uri.parse(url));
 
       expect(response.statusCode, 204);
@@ -326,9 +326,11 @@ void main() {
     });
 
     test('Redirect', () async {
-      final AgattpResponse response =
-          await Agattp(config: const AgattpConfig(followRedirects: false))
-              .get(Uri.parse('https://httpbingo.org/redirect/1'));
+      final AgattpResponse response = await Agattp(
+        config: const AgattpConfig(followRedirects: false),
+      ).get(
+        Uri.parse('https://httpbingo.org/redirect/1'),
+      );
 
       expect(response.statusCode, 302);
       expect(response.reasonPhrase, 'Found');
@@ -340,9 +342,10 @@ void main() {
       final String token =
           DateTime.now().microsecondsSinceEpoch.toRadixString(16).toLowerCase();
 
-      final AgattpResponseJson<Map<String, dynamic>> response =
-          await Agattp.authBearer(token)
-              .getJson(Uri.parse('https://httpbingo.org/bearer'));
+      final AgattpJsonResponse<Map<String, dynamic>> response =
+          await Agattp.authBearer(token).getJson(
+        Uri.parse('https://httpbingo.org/bearer'),
+      );
 
       expect(response.statusCode, 200);
       expect(response.reasonPhrase, 'OK');
@@ -352,7 +355,7 @@ void main() {
     });
 
     test('No Bearer Token', () async {
-      final AgattpResponseJson<Map<String, dynamic>> response =
+      final AgattpJsonResponse<Map<String, dynamic>> response =
           await Agattp().getJson(Uri.parse('https://httpbingo.org/bearer'));
 
       expect(response.statusCode, 401);
@@ -365,7 +368,7 @@ void main() {
       const String user = 'user';
       const String pass = 'pass';
 
-      final AgattpResponseJson<Map<String, dynamic>> response =
+      final AgattpJsonResponse<Map<String, dynamic>> response =
           await Agattp.authBasic(username: user, password: pass).getJson(
         Uri.parse('https://httpbingo.org/basic-auth/$user/$pass'),
       );
@@ -381,7 +384,7 @@ void main() {
       const String user = 'user';
       const String pass = 'pass';
 
-      final AgattpResponseJson<Map<String, dynamic>> response =
+      final AgattpJsonResponse<Map<String, dynamic>> response =
           await Agattp.authBasic(username: user, password: pass).getJson(
         Uri.parse('https://httpbingo.org/basic-auth/$user/a1$pass'),
       );
@@ -397,7 +400,7 @@ void main() {
       const String key = 'X-Test';
       const String value = 'ok';
 
-      final AgattpResponseJson<Map<String, dynamic>> response =
+      final AgattpJsonResponse<Map<String, dynamic>> response =
           await Agattp().getJson(
         Uri.parse('https://httpbingo.org/headers'),
         extraHeaders: <String, String>{
@@ -416,7 +419,7 @@ void main() {
     });
 
     test('Response Headers', () async {
-      final AgattpResponseJson<Map<String, dynamic>> response =
+      final AgattpJsonResponse<Map<String, dynamic>> response =
           await Agattp().getJson(Uri.parse('https://httpbingo.org/headers'));
 
       expect(response.statusCode, 200);
@@ -460,7 +463,7 @@ void main() {
           headers: <String, String>{
             HttpHeaders.contentTypeHeader: 'text/plain',
           },
-          timeout: 2000,
+          timeout: const Duration(milliseconds: 2000),
         );
       } on Exception catch (e) {
         expect(e, isA<TimeoutException>());
@@ -484,7 +487,7 @@ void main() {
         config: AgattpConfig(auth: authDigest),
       );
 
-      final AgattpResponseJson<Map<String, dynamic>> response1 =
+      final AgattpJsonResponse<Map<String, dynamic>> response1 =
           await agattpDigest.getJson(Uri.parse(url));
 
       expect(response1.statusCode, 200);
@@ -496,7 +499,7 @@ void main() {
 
       expect(authDigest.ready, true);
 
-      final AgattpResponseJson<Map<String, dynamic>> response2 =
+      final AgattpJsonResponse<Map<String, dynamic>> response2 =
           await agattpDigest.getJson(Uri.parse(url));
 
       expect(response2.statusCode, 200);
@@ -510,7 +513,7 @@ void main() {
 
       expect(authDigest.ready, false);
 
-      final AgattpResponseJson<Map<String, dynamic>> response3 =
+      final AgattpJsonResponse<Map<String, dynamic>> response3 =
           await agattpDigest.getJson(Uri.parse(url));
 
       expect(response3.statusCode, 200);
@@ -531,9 +534,11 @@ void main() {
       const String url = 'https://httpbingo.org'
           '/digest-auth/auth/$username/$password/$algorithm';
 
-      final AgattpResponseJson<Map<String, dynamic>> response =
-          await Agattp.authDigest(username: username, password: password)
-              .postJson(Uri.parse(url));
+      final AgattpJsonResponse<Map<String, dynamic>> response =
+          await Agattp.authDigest(
+        username: username,
+        password: password,
+      ).postJson(Uri.parse(url));
 
       expect(response.statusCode, 200);
       expect(response.reasonPhrase, 'OK');
@@ -551,9 +556,11 @@ void main() {
       const String url = 'https://httpbingo.org'
           '/digest-auth/auth/$username/$password/$algorithm';
 
-      final AgattpResponseJson<Map<String, dynamic>> response =
-          await Agattp.authDigest(username: username, password: password)
-              .putJson(Uri.parse(url));
+      final AgattpJsonResponse<Map<String, dynamic>> response =
+          await Agattp.authDigest(
+        username: username,
+        password: password,
+      ).putJson(Uri.parse(url));
 
       expect(response.statusCode, 200);
       expect(response.reasonPhrase, 'OK');
@@ -571,9 +578,11 @@ void main() {
       const String url = 'https://httpbingo.org'
           '/digest-auth/auth/$username/$password/$algorithm';
 
-      final AgattpResponseJson<Map<String, dynamic>> response =
-          await Agattp.authDigest(username: username, password: password)
-              .deleteJson(Uri.parse(url));
+      final AgattpJsonResponse<Map<String, dynamic>> response =
+          await Agattp.authDigest(
+        username: username,
+        password: password,
+      ).deleteJson(Uri.parse(url));
 
       expect(response.statusCode, 200);
       expect(response.reasonPhrase, 'OK');
@@ -601,7 +610,7 @@ void main() {
       config: AgattpConfig(auth: authDigest),
     );
 
-    final AgattpResponseJson<Map<String, dynamic>> response1 =
+    final AgattpJsonResponse<Map<String, dynamic>> response1 =
         await agattpDigest.getJson(Uri.parse(url));
 
     expect(response1.statusCode, 200);
@@ -613,7 +622,7 @@ void main() {
 
     expect(authDigest.ready, true);
 
-    final AgattpResponseJson<Map<String, dynamic>> response2 =
+    final AgattpJsonResponse<Map<String, dynamic>> response2 =
         await agattpDigest.getJson(Uri.parse(url));
 
     expect(response2.statusCode, 200);
@@ -627,7 +636,7 @@ void main() {
 
     expect(authDigest.ready, false);
 
-    final AgattpResponseJson<Map<String, dynamic>> response3 =
+    final AgattpJsonResponse<Map<String, dynamic>> response3 =
         await agattpDigest.getJson(Uri.parse(url));
 
     expect(response3.statusCode, 200);
@@ -648,9 +657,11 @@ void main() {
     const String url = 'https://httpbingo.org'
         '/digest-auth/auth/$username/$password/$algorithm';
 
-    final AgattpResponseJson<Map<String, dynamic>> response =
-        await Agattp.authDigest(username: username, password: password)
-            .postJson(Uri.parse(url));
+    final AgattpJsonResponse<Map<String, dynamic>> response =
+        await Agattp.authDigest(
+      username: username,
+      password: password,
+    ).postJson(Uri.parse(url));
 
     expect(response.statusCode, 200);
     expect(response.reasonPhrase, 'OK');
@@ -668,9 +679,10 @@ void main() {
     const String url = 'https://httpbingo.org'
         '/digest-auth/auth/$username/$password/$algorithm';
 
-    final AgattpResponseJson<Map<String, dynamic>> response =
-        await Agattp.authDigest(username: username, password: password)
-            .putJson(Uri.parse(url));
+    final AgattpJsonResponse<Map<String, dynamic>> response =
+        await Agattp.authDigest(username: username, password: password).putJson(
+      Uri.parse(url),
+    );
 
     expect(response.statusCode, 200);
     expect(response.reasonPhrase, 'OK');
@@ -688,9 +700,11 @@ void main() {
     const String url = 'https://httpbingo.org'
         '/digest-auth/auth/$username/$password/$algorithm';
 
-    final AgattpResponseJson<Map<String, dynamic>> response =
-        await Agattp.authDigest(username: username, password: password)
-            .deleteJson(Uri.parse(url));
+    final AgattpJsonResponse<Map<String, dynamic>> response =
+        await Agattp.authDigest(
+      username: username,
+      password: password,
+    ).deleteJson(Uri.parse(url));
 
     expect(response.statusCode, 200);
     expect(response.reasonPhrase, 'OK');
@@ -708,8 +722,9 @@ void main() {
 
     try {
       /// Should have thrown Exception
-      await Agattp.authDigest(username: username, password: password)
-          .getJson(Uri.parse(url));
+      await Agattp.authDigest(username: username, password: password).getJson(
+        Uri.parse(url),
+      );
     } on Exception catch (e) {
       expect(e.toString(), 'Exception: WWW-Authenticate header not found');
     }

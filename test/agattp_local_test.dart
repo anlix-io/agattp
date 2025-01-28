@@ -37,7 +37,7 @@ void main() {
           'X-Test',
         ];
 
-        final AgattpResponseJson<Map<String, dynamic>> response =
+        final AgattpJsonResponse<Map<String, dynamic>> response =
             await Agattp().getJson(
           Uri.parse('http://$server:${container.httpPort}/status/200'),
           extraHeaders: extraHeaders,
@@ -72,7 +72,7 @@ void main() {
           'x-test',
         ];
 
-        final AgattpResponseJson<Map<String, dynamic>> response = await Agattp(
+        final AgattpJsonResponse<Map<String, dynamic>> response = await Agattp(
           config: const AgattpConfig(
             headerKeyCase: HeaderKeyCase.lowercase,
           ),
@@ -110,7 +110,7 @@ void main() {
           'X-tesT',
         ];
 
-        final AgattpResponseJson<Map<String, dynamic>> response = await Agattp(
+        final AgattpJsonResponse<Map<String, dynamic>> response = await Agattp(
           config: const AgattpConfig(
             headerKeyCase: HeaderKeyCase.preserve,
           ),

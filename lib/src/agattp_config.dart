@@ -40,7 +40,7 @@ class AgattpConfig {
   const AgattpConfig({
     this.auth,
     this.badCertificateCallback = blockAllCertificates,
-    this.timeout = const Duration(minutes: 1),
+    this.timeout = const Duration(minutes: 5),
     this.encoding = utf8,
     this.followRedirects = true,
     this.forceClose = false,

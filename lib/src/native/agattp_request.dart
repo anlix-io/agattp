@@ -36,6 +36,7 @@ class AgattpRequest<T, R extends AgattpResponse>
     required Uri uri,
     required Duration? timeout,
     required String? body,
+    List<int>? bytes,
     Map<String, String> headers = const <String, String>{},
   }) async {
     final HttpClient client = HttpClient()..badCertificateCallback =
@@ -61,7 +62,9 @@ class AgattpRequest<T, R extends AgattpResponse>
       request.headers.set(entry.key, entry.value, preserveHeaderCase: true);
     }
 
-    if (body != null) {
+    if (bytes != null) {
+      request.add(bytes);
+    } else if (body != null) {
       request.write(body);
     }
 

@@ -13,6 +13,7 @@ abstract class AgattpRequestInterface<T, R extends AgattpResponse> {
     required Uri uri,
     required String? body,
     required Duration? timeout,
+    List<int>? bytes,
     Map<String, String> headers = const <String, String>{},
   });
 }
@@ -33,6 +34,7 @@ class AgattpRequest<T, R extends AgattpResponse>
     required Uri uri,
     required String? body,
     required Duration? timeout,
+    List<int>? bytes,
     Map<String, String> headers = const <String, String>{},
   }) async {
     // The stub implementation throws an error since no implementation is

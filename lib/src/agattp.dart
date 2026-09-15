@@ -123,6 +123,27 @@ class Agattp {
     );
   }
 
+  Future<AgattpResponse> _sendBytesRequest(
+    AgattpMethod method,
+    Uri uri, {
+    required List<int> bytes,
+    Map<String, String> headers = const <String, String>{},
+    Duration? timeout,
+  }) async {
+    return AgattpRequest<void, AgattpResponse>(config).send(
+      method: method,
+      uri: uri,
+      headers: await _headers(
+        uri: uri,
+        method: method,
+        extraHeaders: headers,
+      ),
+      body: null,
+      bytes: bytes,
+      timeout: timeout,
+    );
+  }
+
   /// A simple GET HTTP request
   Future<AgattpResponse> get(
     Uri uri, {
@@ -227,6 +248,23 @@ class Agattp {
       headers: headers,
       timeout: timeout,
       body: body,
+    );
+  }
+
+  /// A simple PUT HTTP request with a raw binary body - the bytes are sent
+  /// as-is, without any text encoding conversion
+  Future<AgattpResponse> putBytes(
+    Uri uri, {
+    required List<int> bytes,
+    Map<String, String> headers = const <String, String>{},
+    Duration? timeout,
+  }) async {
+    return _sendBytesRequest(
+      AgattpMethod.put,
+      uri,
+      bytes: bytes,
+      headers: headers,
+      timeout: timeout,
     );
   }
 

@@ -35,6 +35,7 @@ class AgattpRequest<T, R extends AgattpResponse>
     required Uri uri,
     required Duration? timeout,
     required String? body,
+    List<int>? bytes,
     Map<String, String> headers = const <String, String>{},
   }) async {
     final Response response = await switch (method) {
@@ -51,7 +52,7 @@ class AgattpRequest<T, R extends AgattpResponse>
       AgattpMethod.put => put(
           uri,
           headers: Utils.headers(headers, config.headerKeyCase),
-          body: body,
+          body: bytes ?? body,
           encoding: config.encoding,
         ).timeout(timeout ?? config.timeout),
       AgattpMethod.delete => delete(

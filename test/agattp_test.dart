@@ -162,6 +162,32 @@ void main() {
       expect(response.body, contains('"data": "Hello World!"'));
     });
 
+    test('PUT Bytes', () async {
+      const List<int> bytes = <int>[
+        72, 101, 108, 108, 111, // "Hello"
+        32, 87, 111, 114, 108, 100, 33, // " World!"
+      ];
+
+      final AgattpResponse response = await Agattp().putBytes(
+        Uri.parse('https://httpbingo.org/put'),
+        headers: <String, String>{
+          HttpHeaders.contentTypeHeader: 'application/octet-stream',
+        },
+        bytes: bytes,
+      );
+
+      expect(response.statusCode, 200);
+      expect(response.reasonPhrase, 'OK');
+      // httpbingo encodes binary bodies as base64 data URIs, in which
+      // 'SGVsbG8gV29ybGQh' decodes to 'Hello World!'
+      expect(
+        response.body,
+        contains(
+          '"data": "data:application/octet-stream;base64,SGVsbG8gV29ybGQh"',
+        ),
+      );
+    });
+
     test('PUT Json With Body', () async {
       const String url = 'https://httpbingo.org/put?test=ok';
 

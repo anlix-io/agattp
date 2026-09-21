@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:agattp/src/agattp_config.dart';
 import 'package:agattp/src/agattp_method.dart';
 import 'package:agattp/src/agattp_response.dart';
@@ -13,7 +15,16 @@ abstract class AgattpRequestInterface<T, R extends AgattpResponse> {
     required Uri uri,
     required String? body,
     required Duration? timeout,
-    List<int>? bytes,
+    Map<String, String> headers = const <String, String>{},
+  });
+
+  /// Actually send a request with a raw binary body and return a Future with
+  /// the response
+  Future<R> sendBytes({
+    required AgattpMethod method,
+    required Uri uri,
+    required Uint8List bytes,
+    required Duration? timeout,
     Map<String, String> headers = const <String, String>{},
   });
 }
@@ -34,7 +45,19 @@ class AgattpRequest<T, R extends AgattpResponse>
     required Uri uri,
     required String? body,
     required Duration? timeout,
-    List<int>? bytes,
+    Map<String, String> headers = const <String, String>{},
+  }) async {
+    // The stub implementation throws an error since no implementation is
+    // provided - likely missing an implementation like native / web
+    throw UnimplementedError('AgattpStubCall.send() is not implemented.');
+  }
+
+  @override
+  Future<R> sendBytes({
+    required AgattpMethod method,
+    required Uri uri,
+    required Uint8List bytes,
+    required Duration? timeout,
     Map<String, String> headers = const <String, String>{},
   }) async {
     // The stub implementation throws an error since no implementation is

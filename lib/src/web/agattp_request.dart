@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:agattp/src/agattp_config.dart';
 import 'package:agattp/src/agattp_method.dart';
 import 'package:agattp/src/agattp_request.dart';
@@ -35,7 +37,6 @@ class AgattpRequest<T, R extends AgattpResponse>
     required Uri uri,
     required Duration? timeout,
     required String? body,
-    List<int>? bytes,
     Map<String, String> headers = const <String, String>{},
   }) async {
     final Response response = await switch (method) {
@@ -52,7 +53,7 @@ class AgattpRequest<T, R extends AgattpResponse>
       AgattpMethod.put => put(
           uri,
           headers: Utils.headers(headers, config.headerKeyCase),
-          body: bytes ?? body,
+          body: body,
           encoding: config.encoding,
         ).timeout(timeout ?? config.timeout),
       AgattpMethod.delete => delete(
@@ -70,6 +71,50 @@ class AgattpRequest<T, R extends AgattpResponse>
           headers: Utils.headers(headers, config.headerKeyCase),
           body: body,
           encoding: config.encoding,
+        ).timeout(timeout ?? config.timeout),
+    };
+
+    return _makeResponse(config, response);
+  }
+
+  @override
+  Future<R> sendBytes({
+    required AgattpMethod method,
+    required Uri uri,
+    required Duration? timeout,
+    required Uint8List bytes,
+    Map<String, String> headers = const <String, String>{},
+  }) async {
+    Utils.checkNoBodyMethod(method);
+
+    final Response response = await switch (method) {
+      AgattpMethod.get => get(
+          uri,
+          headers: Utils.headers(headers, config.headerKeyCase),
+        ).timeout(timeout ?? config.timeout),
+      AgattpMethod.post => post(
+          uri,
+          headers: Utils.headers(headers, config.headerKeyCase),
+          body: bytes,
+        ).timeout(timeout ?? config.timeout),
+      AgattpMethod.put => put(
+          uri,
+          headers: Utils.headers(headers, config.headerKeyCase),
+          body: bytes,
+        ).timeout(timeout ?? config.timeout),
+      AgattpMethod.delete => delete(
+          uri,
+          headers: Utils.headers(headers, config.headerKeyCase),
+          body: bytes,
+        ).timeout(timeout ?? config.timeout),
+      AgattpMethod.head => head(
+          uri,
+          headers: Utils.headers(headers, config.headerKeyCase),
+        ).timeout(timeout ?? config.timeout),
+      AgattpMethod.patch => patch(
+          uri,
+          headers: Utils.headers(headers, config.headerKeyCase),
+          body: bytes,
         ).timeout(timeout ?? config.timeout),
     };
 

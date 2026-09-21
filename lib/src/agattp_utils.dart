@@ -1,3 +1,5 @@
+import 'package:agattp/src/agattp_method.dart';
+
 ///
 ///
 ///
@@ -11,6 +13,17 @@ enum HeaderKeyCase {
 ///
 ///
 class Utils {
+  ///
+  ///
+  ///
+  static void checkNoBodyMethod(AgattpMethod method) {
+    if (method == AgattpMethod.get || method == AgattpMethod.head) {
+      throw ArgumentError(
+        'The ${method.name.toUpperCase()} method cannot have a body.',
+      );
+    }
+  }
+
   ///
   ///
   ///

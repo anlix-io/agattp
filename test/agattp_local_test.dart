@@ -164,6 +164,36 @@ void main() {
         );
       });
 
+      test('Send Bytes DELETE', () async {
+        final Uint8List bytes = Uint8List.fromList(<int>[1, 2, 3]);
+
+        expect(
+          () => AgattpRequest<void, AgattpResponse>(const AgattpConfig())
+              .sendBytes(
+            method: AgattpMethod.delete,
+            uri: Uri.parse('http://$server:${container.httpPort}/status/200'),
+            timeout: null,
+            bytes: bytes,
+          ),
+          throwsArgumentError,
+        );
+      });
+
+      test('Send Bytes PATCH', () async {
+        final Uint8List bytes = Uint8List.fromList(<int>[1, 2, 3]);
+
+        expect(
+          () => AgattpRequest<void, AgattpResponse>(const AgattpConfig())
+              .sendBytes(
+            method: AgattpMethod.patch,
+            uri: Uri.parse('http://$server:${container.httpPort}/status/200'),
+            timeout: null,
+            bytes: bytes,
+          ),
+          throwsArgumentError,
+        );
+      });
+
       ///
       tearDownAll(container.stop);
     },

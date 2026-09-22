@@ -85,13 +85,7 @@ class AgattpRequest<T, R extends AgattpResponse>
     required Uint8List bytes,
     Map<String, String> headers = const <String, String>{},
   }) async {
-    Utils.checkNoBodyMethod(method);
-
     final Response response = await switch (method) {
-      AgattpMethod.get => get(
-          uri,
-          headers: Utils.headers(headers, config.headerKeyCase),
-        ).timeout(timeout ?? config.timeout),
       AgattpMethod.post => post(
           uri,
           headers: Utils.headers(headers, config.headerKeyCase),
@@ -102,20 +96,10 @@ class AgattpRequest<T, R extends AgattpResponse>
           headers: Utils.headers(headers, config.headerKeyCase),
           body: bytes,
         ).timeout(timeout ?? config.timeout),
-      AgattpMethod.delete => delete(
-          uri,
-          headers: Utils.headers(headers, config.headerKeyCase),
-          body: bytes,
-        ).timeout(timeout ?? config.timeout),
-      AgattpMethod.head => head(
-          uri,
-          headers: Utils.headers(headers, config.headerKeyCase),
-        ).timeout(timeout ?? config.timeout),
-      AgattpMethod.patch => patch(
-          uri,
-          headers: Utils.headers(headers, config.headerKeyCase),
-          body: bytes,
-        ).timeout(timeout ?? config.timeout),
+      _ => throw ArgumentError(
+        'The ${method.name.toUpperCase()} method does not support '
+        'sending bytes.',
+      ),
     };
 
     return _makeResponse(config, response);

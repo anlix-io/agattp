@@ -88,18 +88,16 @@ class AgattpRequest<T, R extends AgattpResponse>
     required Uint8List bytes,
     Map<String, String> headers = const <String, String>{},
   }) async {
-    Utils.checkNoBodyMethod(method);
-
     final HttpClient client = HttpClient()..badCertificateCallback =
         config.badCertificateCallback;
 
     final HttpClientRequest request = await switch (method) {
-      AgattpMethod.get => client.getUrl(uri),
       AgattpMethod.post => client.postUrl(uri),
       AgattpMethod.put => client.putUrl(uri),
-      AgattpMethod.delete => client.deleteUrl(uri),
-      AgattpMethod.head => client.headUrl(uri),
-      AgattpMethod.patch => client.patchUrl(uri),
+      _ => throw ArgumentError(
+        'The ${method.name.toUpperCase()} method does not support '
+        'sending bytes.',
+      ),
     };
 
     request.followRedirects = config.followRedirects;

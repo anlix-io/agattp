@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:agattp/src/agattp_config.dart';
 import 'package:agattp/src/agattp_method.dart';
@@ -64,6 +65,53 @@ class AgattpRequest<T, R extends AgattpResponse>
     if (body != null) {
       request.write(body);
     }
+
+    final HttpClientResponse response = await request.close().timeout(
+      timeout ?? config.timeout,
+    );
+
+    final String responseBody =
+        await response.transform(config.encoding.decoder).join();
+
+    final R agattpResponse = _makeResponse(response, responseBody);
+
+    client.close(force: config.forceClose);
+
+    return agattpResponse;
+  }
+
+  @override
+  Future<R> sendBytes({
+    required AgattpMethod method,
+    required Uri uri,
+    required Duration? timeout,
+    required Uint8List bytes,
+    Map<String, String> headers = const <String, String>{},
+  }) async {
+    final HttpClient client = HttpClient()..badCertificateCallback =
+        config.badCertificateCallback;
+
+    final HttpClientRequest request = await switch (method) {
+      AgattpMethod.post => client.postUrl(uri),
+      AgattpMethod.put => client.putUrl(uri),
+      _ => throw ArgumentError(
+        'The ${method.name.toUpperCase()} method does not support '
+        'sending bytes.',
+      ),
+    };
+
+    request.followRedirects = config.followRedirects;
+
+    final Map<String, String> newHeaders = Utils.headers(
+      headers,
+      config.headerKeyCase,
+    );
+
+    for (final MapEntry<String, String> entry in newHeaders.entries) {
+      request.headers.set(entry.key, entry.value, preserveHeaderCase: true);
+    }
+
+    request.add(bytes);
 
     final HttpClientResponse response = await request.close().timeout(
       timeout ?? config.timeout,

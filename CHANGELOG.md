@@ -1,3 +1,7 @@
+## 1.1.0 - 2026-09-23
+
+* Adding support for sending raw byte data.
+
 ## 0.0.7 - 2024-03-21
 
 * Fixing body encoding in AgattpResponseWeb.

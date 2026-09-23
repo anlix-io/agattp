@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:agattp/agattp.dart';
 import 'package:agattp/src/agattp_method.dart';
@@ -123,6 +124,26 @@ class Agattp {
     );
   }
 
+  Future<AgattpResponse> _sendBytesRequest(
+    AgattpMethod method,
+    Uri uri, {
+    required Uint8List bytes,
+    Map<String, String> headers = const <String, String>{},
+    Duration? timeout,
+  }) async {
+    return AgattpRequest<void, AgattpResponse>(config).sendBytes(
+      method: method,
+      uri: uri,
+      headers: await _headers(
+        uri: uri,
+        method: method,
+        extraHeaders: headers,
+      ),
+      bytes: bytes,
+      timeout: timeout,
+    );
+  }
+
   /// A simple GET HTTP request
   Future<AgattpResponse> get(
     Uri uri, {
@@ -197,6 +218,23 @@ class Agattp {
     );
   }
 
+  /// A simple POST HTTP request with a raw binary body - the bytes are sent
+  /// as-is, without any text encoding conversion
+  Future<AgattpResponse> postBytes(
+    Uri uri, {
+    required Uint8List bytes,
+    Map<String, String> headers = const <String, String>{},
+    Duration? timeout,
+  }) async {
+    return _sendBytesRequest(
+      AgattpMethod.post,
+      uri,
+      bytes: bytes,
+      headers: headers,
+      timeout: timeout,
+    );
+  }
+
   /// A simple POST HTTP request that converts the response body to a JSON of
   /// type T - usually a Map<String, dynamic>
   Future<AgattpJsonResponse<T>> postJson<T>(
@@ -227,6 +265,23 @@ class Agattp {
       headers: headers,
       timeout: timeout,
       body: body,
+    );
+  }
+
+  /// A simple PUT HTTP request with a raw binary body - the bytes are sent
+  /// as-is, without any text encoding conversion
+  Future<AgattpResponse> putBytes(
+    Uri uri, {
+    required Uint8List bytes,
+    Map<String, String> headers = const <String, String>{},
+    Duration? timeout,
+  }) async {
+    return _sendBytesRequest(
+      AgattpMethod.put,
+      uri,
+      bytes: bytes,
+      headers: headers,
+      timeout: timeout,
     );
   }
 

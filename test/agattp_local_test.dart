@@ -1,7 +1,10 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:agattp/agattp.dart';
+import 'package:agattp/src/agattp_method.dart';
 import 'package:agattp/src/agattp_utils.dart';
+import 'package:agattp/src/native/agattp_request.dart';
 import 'package:test/test.dart';
 import 'package:testainers/testainers.dart';
 
@@ -129,6 +132,66 @@ void main() {
         for (final String key in headers.keys) {
           expect(results.contains(key), true);
         }
+      });
+
+      test('Send Bytes GET', () async {
+        final Uint8List bytes = Uint8List.fromList(<int>[1, 2, 3]);
+
+        expect(
+          () => AgattpRequest<void, AgattpResponse>(const AgattpConfig())
+              .sendBytes(
+            method: AgattpMethod.get,
+            uri: Uri.parse('http://$server:${container.httpPort}/status/200'),
+            timeout: null,
+            bytes: bytes,
+          ),
+          throwsArgumentError,
+        );
+      });
+
+      test('Send Bytes HEAD', () async {
+        final Uint8List bytes = Uint8List.fromList(<int>[1, 2, 3]);
+
+        expect(
+          () => AgattpRequest<void, AgattpResponse>(const AgattpConfig())
+              .sendBytes(
+            method: AgattpMethod.head,
+            uri: Uri.parse('http://$server:${container.httpPort}/status/200'),
+            timeout: null,
+            bytes: bytes,
+          ),
+          throwsArgumentError,
+        );
+      });
+
+      test('Send Bytes DELETE', () async {
+        final Uint8List bytes = Uint8List.fromList(<int>[1, 2, 3]);
+
+        expect(
+          () => AgattpRequest<void, AgattpResponse>(const AgattpConfig())
+              .sendBytes(
+            method: AgattpMethod.delete,
+            uri: Uri.parse('http://$server:${container.httpPort}/status/200'),
+            timeout: null,
+            bytes: bytes,
+          ),
+          throwsArgumentError,
+        );
+      });
+
+      test('Send Bytes PATCH', () async {
+        final Uint8List bytes = Uint8List.fromList(<int>[1, 2, 3]);
+
+        expect(
+          () => AgattpRequest<void, AgattpResponse>(const AgattpConfig())
+              .sendBytes(
+            method: AgattpMethod.patch,
+            uri: Uri.parse('http://$server:${container.httpPort}/status/200'),
+            timeout: null,
+            bytes: bytes,
+          ),
+          throwsArgumentError,
+        );
       });
 
       ///
